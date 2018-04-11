@@ -1,47 +1,25 @@
 ﻿start = program
 
-//Inicialmente um programa é apenas o bloco
 program 
-	= block?
+	= exp*
     
-block
-	= '{' _ cmd+ _ '}'
-
-cmd 
-	= ident ':=' exp
-    /if
-    /while
-    /print
-
 exp
-	= ident
-    / ident operator ident
+	= operando operator exp 
     / booleanExp
+    / operando 
 
 booleanExp 
-	= ident boolOp ident
-        
-while
-	='while' booleanExp block
-   
-if
-	= 'if' _ booleanExp cmd 'else'  _ cmd
-    /'if' _ booleanExp cmd 'else' block
-    /'if' _ booleanExp block 'else' _ cmd
-    /'if' _ booleanExp block 'else block'
-
-print
-	=_'print('exp: exp')' _ {return "print("+exp+")"}
+	= operando boolOp booleanExp
 
 bool
 	="true" {return true}
 	/"false" {return false}
 
-operand "Operando"
+operando "Operando"
 	= number / ident
 
 ident 
-	=digits:  [a-zA-Z]+  {return digits.join("");}
+	= _ head: [a-zA-Z] tail:[a-zA-Z0-9]* _  {return head.concat(tail.join(""));}
 
 boolOp
 	='~'
@@ -52,28 +30,40 @@ boolOp
     /'>='
 
 operator
-	= '*'
-    /'+'
-    /'/'
-    /'-'
+	= '*' {return "mul"}
+    /'+' {return "add"}
+    /'/' {return "div"}
+    /'-' {return "sub"}
 
 number  
 	=  _ digits:[0-9]+ _ { return parseInt(digits.join("")); }
+
+// optional whitespace
+_  = [ \t\r\n]*
+
+// mandatory whitespace
+__ = [ \t\r\n]+
+
+
+//=========================== OLD
+
+block
+	= '{' ident+ '}'
     
-_ "blank"
-	= WhiteSpace*
-    / line *
+cmd 
+	=  ident _ ':=' _ exp
+    / if
+    /while
+    /print
     
-WhiteSpace "whitespace"
-  = "\t"
-  / "\v"
-  / "\f"
-  / " "
-  / "\u00A0"
-  / "\uFEFF"
-    
-line  = "\n"
-  / "\r\n"
-  / "\r"
-  / "\u2028"
-  / "\u2029"
+while
+	= _ 'while' _ booleanExp _ block _
+   
+if
+	= _'if' _ booleanExp cmd 'else'  _ cmd
+    / _'if' _ booleanExp cmd 'else' block
+    / _'if' _ booleanExp block 'else' _ cmd
+    / _'if' _ booleanExp block 'else block'
+
+print
+	=_'print('exp: exp')' _ {return "print("+exp+")"}
