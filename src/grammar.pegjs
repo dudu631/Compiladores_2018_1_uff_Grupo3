@@ -25,7 +25,7 @@ primary
   /BracketedExpression
 
 BracketedExpression
-  =	"("expression:E1")"  { return expression }
+  =	_ "("expression:E1")" _  { return expression }
 
 number
   = _ digits:[0-9]+ _  { return digits.join(""); }
