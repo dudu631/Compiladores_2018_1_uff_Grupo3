@@ -1,69 +1,53 @@
-﻿start = program
+﻿{ 
+    function leftAssoc(rest, val) {
+        if (!rest.length) return val;
+        var last = rest.pop();
+        return {left:leftAssoc(rest, last[0]), operator:last[1], right:val};
+    }
+    function rightAssoc(val, rest) {
+        if (!rest.length) return val;
+        var first = rest.shift();
+        return {left:val, operator:first[0], right:rightAssoc(first[1], rest)};
+    }
+}
 
-program 
-	= exp*
-    
-exp
-	= operando operator exp 
-    / booleanExp
-    / operando 
+Start = E1
 
-booleanExp 
-	= operando boolOp booleanExp
+E1 = v:(E2 (add / sub))* rest:E2
+     { return leftAssoc(v, rest); }
 
-bool
-	="true" {return true}
-	/"false" {return false}
+E2 = v:(primary (mul / div))* rest:primary
+     { return leftAssoc(v, rest); }
+ 
+primary
+  = number
+  / ident
+  /BracketedExpression
 
-operando "Operando"
-	= number / ident
+BracketedExpression
+  =	"("expression:E1")"  { return expression }
+
+number
+  =  digits:[0-9]+  { return digits.join(""); }
 
 ident 
-	= _ head: [a-zA-Z] tail:[a-zA-Z0-9]* _  {return head.concat(tail.join(""));}
+    =  head: [a-zA-Z] tail:[a-zA-Z0-9]*   {return head.concat(tail.join(""));}
 
-boolOp
-	='~'
-    /'=='
-    /'<'
-    /'<='
-    /'>'
-    /'>='
 
-operator
-	= '*' {return "mul"}
-    /'+' {return "add"}
-    /'/' {return "div"}
-    /'-' {return "sub"}
+add
+    = "+" { return "add" }
 
-number  
-	=  _ digits:[0-9]+ _ { return parseInt(digits.join("")); }
+sub
+    = "-" { return "sub" }
+
+mul 
+    = "*" {return "mul"}
+
+div 
+    = "/" {return "div"}
 
 // optional whitespace
-_  = [ \t\r\n]*
+_  = [ \t\r\n]
 
 // mandatory whitespace
 __ = [ \t\r\n]+
-
-
-//=========================== OLD
-
-block
-	= '{' ident+ '}'
-    
-cmd 
-	=  ident _ ':=' _ exp
-    / if
-    /while
-    /print
-    
-while
-	= _ 'while' _ booleanExp _ block _
-   
-if
-	= _'if' _ booleanExp cmd 'else'  _ cmd
-    / _'if' _ booleanExp cmd 'else' block
-    / _'if' _ booleanExp block 'else' _ cmd
-    / _'if' _ booleanExp block 'else block'
-
-print
-	=_'print('exp: exp')' _ {return "print("+exp+")"}
