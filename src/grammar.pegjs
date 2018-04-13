@@ -28,10 +28,10 @@ BracketedExpression
   =	"("expression:E1")"  { return expression }
 
 number
-  =  digits:[0-9]+  { return digits.join(""); }
+  = _ digits:[0-9]+ _  { return digits.join(""); }
 
 ident 
-    =  head: [a-zA-Z] tail:[a-zA-Z0-9]*   {return head.concat(tail.join(""));}
+    = _ head: [a-zA-Z] tail:[a-zA-Z0-9]*  _ {return head.concat(tail.join(""));}
 
 
 add
@@ -47,7 +47,7 @@ div
     = "/" {return "div"}
 
 // optional whitespace
-_  = [ \t\r\n]
+_  = [ \t\r\n]*
 
 // mandatory whitespace
 __ = [ \t\r\n]+
