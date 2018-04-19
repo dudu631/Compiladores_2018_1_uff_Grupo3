@@ -1,0 +1,21 @@
+{
+  "name": "Warlock",
+  "authors": [
+    "dudu631 <eduardo9ramos@hotmail.com>"
+  ],
+  "description": "",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "index.html",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "cytoscape": "^3.2.11",
+    "jquery": "^3.3.1"
+  }
+}
