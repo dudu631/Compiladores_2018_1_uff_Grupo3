@@ -30,23 +30,22 @@ class SMC {
         this.M.set(key, x);
     }
 
-    inicializa(tree) {
+    //Quebra a arvore e empilha no controle
+    desmembra() {
+        var tree = this.desempilhaControle();
         this.empilhaControle(tree.right);
         this.empilhaControle(tree.operator);
         this.empilhaControle(tree.left);
     }
 
-    inicializa1(left, op, right) {
-        this.empilhaControle(right);
-        this.empilhaControle(op);
-        this.empilhaControle(left);
-    }
-
+    //Desempilha do controle, empilha no valor
     caso1() {
-        this.empilhaValor(this.desempilhaControle());
+        this.empilhaValor(parseInt(this.desempilhaControle()));
     }
 
+    //A OP B  ->  A B OP
     caso3() {
+        this.desmembra();
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
         var right = this.desempilhaControle();
@@ -61,6 +60,7 @@ class SMC {
         }
     }
 
+    //Resolve a operação
     caso4() {
         var aux = this.desempilhaControle();
         if (aux == 'add') {
@@ -81,25 +81,7 @@ class SMC {
         }
     }
 
-    resolve() {
-        while (this.C.length != 0) {
-            this.caso3();
-            if (parseInt(this.C[this.C.length - 1]) > 0) {
-                this.caso1();
-            } else {
-                if (this.C[this.C.length - 1] == 'add' || this.C[this.C.length - 1] == 'sub' || this.C[this.C.length - 1] == 'mul' || this.C[this.C.length - 1] == 'div') {
-                    this.caso4();
-                } else {
-                    var caio = new SMC([], new Map(), []);
-                    caio.inicializa1(this.C[this.C.length - 1].left, this.C[this.C.length - 1].operator, this.C[this.C.length - 1].right);
-                    this.desempilhaControle();
-                    caio.resolve();
-                    var x = caio.desempilhaValor();
-                    this.empilhaValor(x);
-                }
-            }
-        }
-    }
+   
 };
 
 module.exports = SMC;
