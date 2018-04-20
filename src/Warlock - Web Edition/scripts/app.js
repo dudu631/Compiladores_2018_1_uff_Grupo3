@@ -12,7 +12,8 @@ lay.run();
 
 function evalSMC(smc) {
     console.log("\n")
-    console.log(smc);
+	
+	console.log(JSON.parse(JSON.stringify(smc)));
 
     if (smc.C.length > 0) {
 

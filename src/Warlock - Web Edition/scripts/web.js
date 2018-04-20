@@ -2,7 +2,7 @@ $( "#button" ).click(function() {
 	cy.elements().remove();
 	var tree = parser.parse($("#exp").val());
 
-	eval(tree, new SMC([], new Map(), []));
+	evalSMC(new SMC([], new Map(), [tree]));
 
 	addNodes(tree);
 
