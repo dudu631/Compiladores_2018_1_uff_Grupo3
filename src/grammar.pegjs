@@ -11,7 +11,19 @@
     }
 }
 
-Start = E1
+Start = Expression?
+
+Expression
+	= BoolExpression
+    / AritExpression
+    
+BoolExpression
+	= v:(AritExpression boolop)* rest:AritExpression { return leftAssoc(v, rest); }
+    / v:(primary boolop)* rest:AritExpression { return leftAssoc(v, rest); }
+    / v:(AritExpression boolop)* rest:primary { return leftAssoc(v, rest); }     
+    
+AritExpression
+	= E1
 
 E1 = v:(E2 (add / sub))* rest:E2
      { return leftAssoc(v, rest); }
@@ -32,6 +44,13 @@ number
 
 ident 
     = _ head: [a-zA-Z] tail:[a-zA-Z0-9]*  _ {return head.concat(tail.join(""));}
+
+boolop
+	= "==" { return "eq" }
+    / ">=" { return "ge" }
+    / ">" {	return "gt" }
+    / "<=" {return "le" }
+    / "<" {return "lt" }
 
 
 add
