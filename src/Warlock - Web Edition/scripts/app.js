@@ -38,7 +38,4 @@ function verificarReservado(key) {
     return reserved.has(key) ? true : false;
 }
 
-function add(){
-	alert('yupi');
-}
 
