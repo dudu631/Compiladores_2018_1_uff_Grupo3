@@ -1,21 +1,13 @@
 var peg = require("pegjs");
 var fs = require("fs");
 const SMC = require("./SMC.js");
-var http = require('http');
 
 var reserved = new Map();
-reserved.set("add", '+');
-reserved.set("mul", '*');
-reserved.set("div", '/');
-reserved.set("sub", '-');
-
+init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-
-var tree = parser.parse("16/8+(3-2)-9*3");
-
+var tree = parser.parse("2+3+2");
 var final = eval(new SMC([], new Map(), [tree]));
-
 
 
 
@@ -34,7 +26,7 @@ function eval(smc) {
             smc.caso1();
             eval(smc);
         } else if (verificarReservado(atual)) {
-            smc.caso4();
+            smc.caso4(reserved.get(atual));
             eval(smc);
         }
         
@@ -48,4 +40,55 @@ function verificarReservado(key) {
     return reserved.has(key) ? true : false;
 }
 
+
+
+
+// Primitive functions
+function init() {
+    reserved.set("add", add);
+    reserved.set("sub", sub);
+    reserved.set("div", div);
+    reserved.set("mul", mul);
+    reserved.set("eq", eq);
+    reserved.set("le", le);
+    reserved.set("lt", lt);
+    reserved.set("ge", ge);
+    reserved.set("gt", gt);
+}
+
+function add(a, b) {
+    return a + b;
+}
+
+function sub(a, b) {
+    return a - b;
+}
+
+function div(a, b) {
+    return a / b;
+}
+
+function mul(a, b) {
+    return a * b;
+}
+
+function eq(a, b) {
+    return a == b;
+}
+
+function le(a, b) {
+    return a <= b;
+}
+
+function lt(a, b) {
+    return a < b;
+}
+
+function ge(a, b) {
+    return a >= b;
+}
+
+function gt(a, b) {
+    return a > b;
+}
 

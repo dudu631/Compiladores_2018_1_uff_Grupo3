@@ -61,24 +61,12 @@ class SMC {
     }
 
     //Resolve a operação
-    caso4() {
+    caso4(fun) {
         var aux = this.desempilhaControle();
-        if (aux == 'add') {
-            this.empilhaValor(parseInt(this.desempilhaValor()) + parseInt(this.desempilhaValor()));
-        }
-        if (aux == 'sub') {
-            var second = parseInt(this.desempilhaValor());
-            var first = parseInt(this.desempilhaValor());
-            this.empilhaValor(first - second);
-        }
-        if (aux == 'mul') {
-            this.empilhaValor(parseInt(this.desempilhaValor()) * parseInt(this.desempilhaValor()));
-        }
-        if (aux == 'div') {
-            var second = parseInt(this.desempilhaValor());
-            var first = parseInt(this.desempilhaValor());
-            this.empilhaValor(first / second);
-        }
+
+        var second = parseInt(this.desempilhaValor());
+        var first = parseInt(this.desempilhaValor());
+        this.empilhaValor(fun(first, second));
     }
 
    

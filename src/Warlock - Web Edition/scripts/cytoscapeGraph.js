@@ -78,4 +78,11 @@ var cy = window.cy = cytoscape({
 	
 	
 	};
+
+	function isRoot(x){
+		if(x.hasOwnProperty('operator')){
+			return true;
+		}
+		return false;
+	};
 	

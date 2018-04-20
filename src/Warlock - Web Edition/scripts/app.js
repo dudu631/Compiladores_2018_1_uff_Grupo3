@@ -1,14 +1,8 @@
-var reserved = new Map();
-reserved.set("add", '+');
-reserved.set("mul", '*');
-reserved.set("div", '/');
-reserved.set("sub", '-');
-
 var parser = peg.generate(grammar);
 var id = 0;
 
 var tree = parser.parse("2*3+5/9");
-debugger;
+
 evalSMC(new SMC([], new Map(), [tree]));
 
 addNodes(tree);
@@ -31,7 +25,7 @@ function evalSMC(smc) {
             smc.caso1();
             evalSMC(smc);
         } else if (verificarReservado(atual)) {
-            smc.caso4();
+            smc.caso4(reserved.get(atual));
             evalSMC(smc);
         }       
     }
@@ -43,22 +37,7 @@ function verificarReservado(key) {
     return reserved.has(key) ? true : false;
 }
 
-function isRoot(x){
-	if(x.hasOwnProperty('operator')){
-		return true;
-	}
-	return false;
-};
+function add(){
+	alert('yupi');
+}
 
-$( "#button" ).click(function() {
-	cy.elements().remove();
-	var tree = parser.parse($("#exp").val());
-
-	eval(tree, new SMC([], new Map(), []));
-
-	addNodes(tree);
-
-	var lay = cy.makeLayout({name: 'dagre'});
-	lay.run();
-
-});
