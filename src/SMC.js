@@ -79,6 +79,31 @@ class SMC {
             var first = parseInt(this.desempilhaValor());
             this.empilhaValor(first / second);
         }
+        if (aux == 'ge') {
+            var second = parseInt(this.desempilhaValor());
+            var first = parseInt(this.desempilhaValor());
+            this.empilhaValor(first >= second);
+        }
+        if (aux == 'gt') {
+            var second = parseInt(this.desempilhaValor());
+            var first = parseInt(this.desempilhaValor());
+            this.empilhaValor(first > second);
+        }
+        if (aux == 'le') {
+            var second = parseInt(this.desempilhaValor());
+            var first = parseInt(this.desempilhaValor());
+            this.empilhaValor(first <= second);
+        }
+        if (aux == 'lt') {
+            var second = parseInt(this.desempilhaValor());
+            var first = parseInt(this.desempilhaValor());
+            this.empilhaValor(first < second);
+        }
+        if (aux == 'eq') {
+            var second = parseInt(this.desempilhaValor());
+            var first = parseInt(this.desempilhaValor());
+            this.empilhaValor(first == second);
+        }
     }
 
    

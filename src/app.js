@@ -8,11 +8,16 @@ reserved.set("add", '+');
 reserved.set("mul", '*');
 reserved.set("div", '/');
 reserved.set("sub", '-');
+reserved.set("gt", '>=');
+reserved.set("ge", '>');
+reserved.set("le", '<=');
+reserved.set("lt", '<');
+reserved.set("eq", '==');
 
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
 
-var tree = parser.parse("16/8+(3-2)-9*3");
+var tree = parser.parse("2+2");
 
 var final = eval(new SMC([], new Map(), [tree]));
 
@@ -26,7 +31,6 @@ function eval(smc) {
     if (smc.C.length > 0) {
 
         var atual = smc.C[smc.C.length - 1]; //peek stack
-
         if (atual.hasOwnProperty('operator')) {
             smc.caso3();
             eval(smc);
