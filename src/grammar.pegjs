@@ -14,13 +14,19 @@
 Start = Expression?
 
 Expression
-	= BoolExpression
+	= Assignment
+    / Negate
+    / BoolExpression
     / AritExpression
+   
     
 BoolExpression
 	= v:(AritExpression boolop)* rest:AritExpression { return leftAssoc(v, rest); }
     / v:(primary boolop)* rest:AritExpression { return leftAssoc(v, rest); }
     / v:(AritExpression boolop)* rest:primary { return leftAssoc(v, rest); }     
+
+Negate 
+	= v:neg rest:BoolExpression {return {left:rest, operator:v, right:null}}
     
 AritExpression
 	= E1
@@ -31,6 +37,9 @@ E1 = v:(E2 (add / sub))* rest:E2
 E2 = v:(primary (mul / div))* rest:primary
      { return leftAssoc(v, rest); }
  
+Assignment
+	= l: ident op:":=" r:Expression {return {left:l, operator:op, right:r}}
+     
 primary
   = number
   / ident
@@ -51,6 +60,9 @@ boolop
     / ">" {	return "gt" }
     / "<=" {return "le" }
     / "<" {return "lt" }
+
+neg
+	= _"~"_ {return "neg"}
 
 
 add
