@@ -8,26 +8,31 @@
         if (!rest.length) return val;
         var first = rest.shift();
         return {left:val, operator:first[0], right:rightAssoc(first[1], rest)};
-    }
+    }   
 }
 
 Start = Block?
 
-Block= _"{" v:Sequence+ "}"_ {return v;}
+Block= _"{"_ v:Sequence+ _"}"_ {return v;}
 
 Sequence =
-	 l:Command op:';' r:Sequence* {return {left:l , operator:"seq", right:r}}
+	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }
+     / Command
      
 Command =
 	Assignment
     /If
     
 If =
-	"if" _ BoolExpression _ Command _ "else" _ Command
-    /"if " BoolExpression Command "else" Block
-    /"if " BoolExpression Block "else" Command
-    /"if " BoolExpression Block "else" Block
-    
+	op:"if" __  l:BoolExpression r:Command "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /op:"if" __ l:BoolExpression r:Command "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /op:"if" __ l:BoolExpression r:Block "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /op:"if" __ l:BoolExpression r:Block "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
+
+While =
+	op:"while" __ l:BoolExpression r:Block {return {left:l,operator:op.trim(),right:r}}
+
+
 Expression
 	= Negate
     / BoolExpression
