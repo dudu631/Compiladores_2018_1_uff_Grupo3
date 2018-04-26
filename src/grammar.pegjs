@@ -11,15 +11,28 @@
     }
 }
 
-Start = Expression?
+Start = Block?
 
+Block= _"{" v:Sequence+ "}"_ {return v;}
+
+Sequence =
+	 l:Command op:';' r:Sequence* {return {left:l , operator:"seq", right:r}}
+     
+Command =
+	Assignment
+    /If
+    
+If =
+	"if" _ BoolExpression _ Command _ "else" _ Command
+    /"if " BoolExpression Command "else" Block
+    /"if " BoolExpression Block "else" Command
+    /"if " BoolExpression Block "else" Block
+    
 Expression
-	= Assignment
-    / Negate
+	= Negate
     / BoolExpression
     / AritExpression
    
-    
 BoolExpression
 	= v:(AritExpression boolop)* rest:AritExpression { return leftAssoc(v, rest); }
     / v:(primary boolop)* rest:AritExpression { return leftAssoc(v, rest); }
@@ -63,7 +76,6 @@ boolop
 
 neg
 	= _"~"_ {return "neg"}
-
 
 add
     = "+" { return "add" }
