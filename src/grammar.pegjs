@@ -22,6 +22,7 @@ Sequence =
 Command =
 	Assignment
     /If
+	/While
     
 If =
 	op:"if" __  l:BoolExpression r:Command "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}

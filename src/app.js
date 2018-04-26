@@ -6,9 +6,8 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("2+3+2");
+var tree = parser.parse("{a:=2+2}");
 var final = eval(new SMC([], new Map(), [tree]));
-
 
 
 function eval(smc) {
@@ -20,13 +19,25 @@ function eval(smc) {
         var atual = smc.C[smc.C.length - 1]; //peek stack
 
         if (atual.hasOwnProperty('operator')) {
-            smc.caso3();
-            eval(smc);
-        } else if (parseInt(atual) > 0) {
-            smc.caso1();
+            if (atual.operator.localeCompare(":=")) {
+                sms.caso3Ass();
+            } else if (atual.operator.localeCompare("if")) {
+                sms.caso3If();
+            } else if (atual.operator.localeCompare("while")) {
+                sms.caso3While();
+            } else {
+                sms.caso3Expressoes();
+            }
             eval(smc);
         } else if (verificarReservado(atual)) {
-            smc.caso4(reserved.get(atual));
+            if (reserved.get(atual) != 0) {
+                smc.caso4Expressoes(reserved.get(atual));
+            } else {
+                sms.caso4Ass();
+            }
+            eval(smc);
+        } else{
+            smc.caso1();
             eval(smc);
         }
         
@@ -54,6 +65,7 @@ function init() {
     reserved.set("lt", lt);
     reserved.set("ge", ge);
     reserved.set("gt", gt);
+    reserved.set("ass", 0);
 }
 
 function add(a, b) {
