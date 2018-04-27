@@ -12,14 +12,20 @@ $("#defaultOpen").click();
 
 $( "#gerar" ).click(function() {
 	cy.elements().remove();
-	var tree = parser.parse($("#exp").val());
+	try{
+		var tree = parser.parse($("#exp").val());
 
-	evalSMC(new SMC([], new Map(), [tree]));
+		evalSMC(new SMC([], new Map(), [tree]));
 
-	addNodes(tree);
+		addNodes(tree);
 
-	var lay = cy.makeLayout({name: 'dagre'});
-	lay.run();
+		var lay = cy.makeLayout({name: 'dagre'});
+		lay.run();
+		$("#exp").removeClass("is-invalid");
+	}catch(error){
+		
+		$("#exp").addClass("is-invalid");
+	}
 
 });
 
@@ -32,11 +38,15 @@ $( "#reset" ).click(function() {
 $( "#compilar" ).click(function() {
 	input = $("#codigoInput").val();
 	$("#resultadoOutput").val("");
-	tree = parser.parse(input);
+	try{
+		$("#codigoInput").removeClass("is-invalid");
+		tree = parser.parse(input);
 
-	count=0;
-	output = evalSMC(new SMC([], new Map(), [tree]));
-
+		count=0;
+		output = evalSMC(new SMC([], new Map(), [tree]));
+	}catch(err){
+		$("#codigoInput").addClass("is-invalid");
+	}
 });
 
 
