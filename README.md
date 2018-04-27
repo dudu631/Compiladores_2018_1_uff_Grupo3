@@ -2,14 +2,21 @@
 <img src="./warlock-logo.png">
 </p>
 
-"This was NOT in my contract!"
+Warlock 6.66V
 
 Linguagem: <del>Curry</del> <del>Groovy</del> Javascript
 
-Alunos: 
+Grupo: 
 
 -Caio Saracuza Luz
 
 -Eduardo Motta Ramos
+
+<del>-Arthur Vieira</del>
+
+<del>-Beatriz Campos</del>
+
+Membro Honorário:
+-Karina Pedroza
 
 
