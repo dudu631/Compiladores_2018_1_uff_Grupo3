@@ -6,7 +6,7 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{x:=5;y:=1; while ~(x==0){y:=x*y;x:=x-1}}");
+var tree = parser.parse("{x:=2+2}");
 var final = eval(new SMC([], new Map(), [tree]));
 
 function eval(smc) {
@@ -27,24 +27,18 @@ function eval(smc) {
             } else {
                 smc.organizaExpressoes();
             }
-        
         } else if (verificarReservado(atual)) {
             if (reserved.get(atual) != 0) {
                 smc.resolveExpressoes(reserved.get(atual));
             } else {
                 smc.resolveComando(atual);
             }
-        
-        } else{
+        } else {
             smc.caso1();
         }
-
         eval(smc);
-        
     }
-
     return smc;
-
 }
 
 function verificarReservado(key) {

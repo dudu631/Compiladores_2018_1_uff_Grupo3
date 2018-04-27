@@ -68,29 +68,6 @@ class SMC {
         }
     }
 
-    resolveComando(cmd) {
-
-        switch (cmd) {
-            case "ass":
-                this.resolveAtribuicao();
-                break;
-            case "if":
-                this.resolveIf();
-                break;
-            case "while":
-                this.resolveWhile();
-                break;
-            case "print":
-                this.resolvePrint();
-                break;
-            default:
-        }
-    }
-
-    resolvePrint() {
-
-    }
-
     //Resolve a operação
     resolveExpressoes(fun) {
         var aux = this.desempilhaControle();
@@ -191,8 +168,31 @@ class SMC {
         }
     }
 
+    resolveComando(cmd) {
+
+        switch (cmd) {
+            case "ass":
+                this.resolveAtribuicao();
+                break;
+            case "if":
+                this.resolveIf();
+                break;
+            case "while":
+                this.resolveWhile();
+                break;
+            case "print":
+                this.resolvePrint();
+                break;
+            default:
+        }
+    }
+
     isNumber(n) {
         return !isNaN(parseInt(n)) && isFinite(n);
+    }
+
+    resolvePrint() {
+
     }
 };
 

@@ -1,22 +1,29 @@
 <p align="center">
-<img src="./warlock-logo.png">
+<img src="./warlock-logo.jpg">
 </p>
 
-Warlock 6.66V
+# Warlock
+Warlock é um compilador em JavaScript para a linguagem de programação [IMP](https://github.com/ChristianoBraga/BPLC/tree/master/examples/imp) :smiling_imp:
 
-Linguagem: <del>Curry</del> <del>Groovy</del> Javascript
+## Linguagem:
+~~Curry~~
+~~Groovy~~
+Javascript 
 
-Grupo: 
+## Grupo: 
 
--Caio Saracuza Luz
+* Caio Saracuza Luz
 
--Eduardo Motta Ramos
+* Eduardo Motta Ramos
 
-<del>-Arthur Vieira</del>
+### In Memoriam
 
-<del>-Beatriz Campos</del>
+:ghost: ~~Arthur Vieira~~
 
-Membro Honorário:
--Karina Pedroza
+:ghost: ~~Beatriz Campos~~
+
+### Membro Honorário:
+
+ * Karina Pedroza
 
 
