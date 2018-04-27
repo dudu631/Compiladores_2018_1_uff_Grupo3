@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./warlock-logo.png">
+<img src="./warlock-logo.jpg">
 </p>
 
 Warlock V6.66
