@@ -1,8 +1,4 @@
-<p align="center">
-<img src="./warlock-logo.png">
-</p>
-
-Warlock 6.66V
+Warlock V6.66
 
 Linguagem: <del>Curry</del> <del>Groovy</del> Javascript
 
