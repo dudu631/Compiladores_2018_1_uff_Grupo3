@@ -6,9 +6,8 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{a:=2+2}");
+var tree = parser.parse("{x:=1; while ~(x==0){x:=x-1;}}");
 var final = eval(new SMC([], new Map(), [tree]));
-
 
 function eval(smc) {
     console.log("\n")
@@ -19,21 +18,25 @@ function eval(smc) {
         var atual = smc.C[smc.C.length - 1]; //peek stack
 
         if (atual.hasOwnProperty('operator')) {
-            if (atual.operator.localeCompare(":=")) {
-                sms.caso3Ass();
-            } else if (atual.operator.localeCompare("if")) {
-                sms.caso3If();
-            } else if (atual.operator.localeCompare("while")) {
-                sms.caso3While();
+            if (atual.operator == ":=") {
+                smc.caso3Ass();
+            } else if (atual.operator == "if") {
+                smc.caso3If();
+            } else if (atual.operator == "while") {
+                smc.caso3While();
             } else {
-                sms.caso3Expressoes();
+                smc.caso3Expressoes();
             }
             eval(smc);
         } else if (verificarReservado(atual)) {
             if (reserved.get(atual) != 0) {
                 smc.caso4Expressoes(reserved.get(atual));
+            } else if (atual == ":=") {
+                smc.caso4Ass();
+            } else if (atual == "if") {
+                smc.caso4If();
             } else {
-                sms.caso4Ass();
+                smc.caso4While();
             }
             eval(smc);
         } else{
@@ -65,7 +68,9 @@ function init() {
     reserved.set("lt", lt);
     reserved.set("ge", ge);
     reserved.set("gt", gt);
-    reserved.set("ass", 0);
+    reserved.set(":=", 0);
+    reserved.set("if", 0);
+    reserved.set("while", 0);
 }
 
 function add(a, b) {

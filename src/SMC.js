@@ -94,9 +94,9 @@ class SMC {
 
     caso4Ass() {
         var aux = this.desempilhaControle();
-        var valor = parseInt(this.desempilhaValor());
-        var key = parseInt(this.desempilhaValor());
-        this.guardaMemoria(key, value);
+        var valor = this.desempilhaValor();
+        var key = this.desempilhaValor();
+        this.guardaMemoria(key, valor);
     }
 
     caso3If() {
