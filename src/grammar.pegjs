@@ -17,7 +17,7 @@ Block= _"{"_ v:Sequence _"}"_ {return v}
 
 Sequence =
 	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }
-     / l:Command {return l}
+     / l:Command ';'? {return l}
      
 Command =
 	Assignment
@@ -65,7 +65,7 @@ primary
   /BracketedExpression
 
 BracketedExpression
-  =	_ "("expression:E1")" _  { return expression }
+  =	_ "("expression:Expression")" _  { return expression }
 
 number
   = _ digits:[0-9]+ _  { return digits.join(""); }
