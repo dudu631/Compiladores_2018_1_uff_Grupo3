@@ -107,7 +107,7 @@ class SMC {
                 first = this.acessaMemoria(first);
             }
 
-            this.empilhaValor(fun(first, second));
+            this.empilhaValor(fun(parseInt(first), parseInt(second)));
         } else {
             var first = this.desempilhaValor();
             this.empilhaValor(fun(first));
@@ -188,6 +188,23 @@ class SMC {
         return !isNaN(parseInt(n)) && isFinite(n);
     }
    
+    json(){
+
+        var temp=this.strMapToObj(this.M);
+
+        return JSON.stringify(new SMC(this.S, temp, this.C));
+    }
+
+    //Funcao auxiliar para printar o map 
+    strMapToObj(strMap) {
+        let obj = Object.create(null);
+        for (let [k,v] of strMap) {
+            // We don’t escape the key '__proto__'
+            // which can cause problems on older engines
+            obj[k] = v;
+        }
+        return obj;
+    }
 };
 
 

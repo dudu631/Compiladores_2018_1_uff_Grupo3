@@ -106,7 +106,7 @@ class SMC {
                 first = this.acessaMemoria(first);
             }
 
-            this.empilhaValor(fun(first, second));
+            this.empilhaValor(fun(parseInt(first), parseInt(second)));
         } else {
             var first = this.desempilhaValor();
             this.empilhaValor(fun(first));

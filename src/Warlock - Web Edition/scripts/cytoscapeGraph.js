@@ -45,42 +45,44 @@ var cy = window.cy = cytoscape({
 				data: { id: tree.operator.id, value: tree.operator.value }
 				});
 		
+		if(tree.left!=null){
+			if(isRoot(tree.left)){
+				addNodes(tree.left);
+				cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.left.operator.id } })		
+					
+			}else{
+				temp = new Object;
+				temp.id = id++;
+				temp.value = tree.left;
+				tree.left =  temp;		
+				cy.add({group: "nodes",
+					data: { id: tree.left.id , value: tree.left.value}
+					});	
+				cy.add({ group: "edges",data: { source: tree.operator.id, target: tree.left.id } })			
+			}
+		}
 		
-		if(isRoot(tree.left)){
-			addNodes(tree.left);
-			cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.left.operator.id } })		
+		if(tree.right!=null){
+			if(tree.right!=null && isRoot(tree.right)){
+				addNodes(tree.right);
+				cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.right.operator.id } })	
+			}else{
+				temp = new Object;
+				temp.id = id++;
+				temp.value = tree.right;
+				tree.right =  temp;		
 				
-		}else{
-			temp = new Object;
-			temp.id = id++;
-			temp.value = tree.left;
-			tree.left =  temp;		
-			cy.add({group: "nodes",
-				data: { id: tree.left.id , value: tree.left.value}
-				});	
-			cy.add({ group: "edges",data: { source: tree.operator.id, target: tree.left.id } })			
+				cy.add({group: "nodes",
+				data: { id: tree.right.id, value:tree.right.value }
+				});
+				cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.right.id } })			
+			}
 		}
-	
-		if(isRoot(tree.right)){
-			addNodes(tree.right);
-			cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.right.operator.id } })	
-		}else{
-			temp = new Object;
-			temp.id = id++;
-			temp.value = tree.right;
-			tree.right =  temp;		
-			
-			cy.add({group: "nodes",
-			data: { id: tree.right.id, value:tree.right.value }
-			});
-			cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.right.id } })			
-		}
-	
 	
 	};
 
 	function isRoot(x){
-		if(x.hasOwnProperty('operator')){
+		if(x!= null && x.hasOwnProperty('operator')){
 			return true;
 		}
 		return false;
