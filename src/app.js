@@ -6,7 +6,7 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{x:=1; while ~(x==0){x:=x-1;}}");
+var tree = parser.parse("{x:=5;y:=1; while ~(x==0){y:=x*y;x:=x-1}}");
 var final = eval(new SMC([], new Map(), [tree]));
 
 function eval(smc) {
@@ -18,7 +18,7 @@ function eval(smc) {
         var atual = smc.C[smc.C.length - 1]; //peek stack
 
         if (atual.hasOwnProperty('operator')) {
-            if (atual.operator == ":=") {
+            if (atual.operator == "ass") {
                 smc.caso3Ass();
             } else if (atual.operator == "if") {
                 smc.caso3If();
@@ -28,10 +28,11 @@ function eval(smc) {
                 smc.caso3Expressoes();
             }
             eval(smc);
+
         } else if (verificarReservado(atual)) {
             if (reserved.get(atual) != 0) {
                 smc.caso4Expressoes(reserved.get(atual));
-            } else if (atual == ":=") {
+            } else if (atual == "ass") {
                 smc.caso4Ass();
             } else if (atual == "if") {
                 smc.caso4If();
@@ -54,9 +55,6 @@ function verificarReservado(key) {
     return reserved.has(key) ? true : false;
 }
 
-
-
-
 // Primitive functions
 function init() {
     reserved.set("add", add);
@@ -68,7 +66,8 @@ function init() {
     reserved.set("lt", lt);
     reserved.set("ge", ge);
     reserved.set("gt", gt);
-    reserved.set(":=", 0);
+    reserved.set("neg", neg);
+    reserved.set("ass", 0);
     reserved.set("if", 0);
     reserved.set("while", 0);
 }
@@ -109,3 +108,6 @@ function gt(a, b) {
     return a > b;
 }
 
+function neg(a) {
+    return !a;
+}

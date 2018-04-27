@@ -68,12 +68,30 @@ class SMC {
         }
     }
 
+    isNumber(n) {
+        return !isNaN(parseInt(n)) && isFinite(n);
+    }
+
     //Resolve a operação
     caso4Expressoes(fun) {
         var aux = this.desempilhaControle();
-        var second = parseInt(this.desempilhaValor());
-        var first = parseInt(this.desempilhaValor());
-        this.empilhaValor(fun(first, second));
+
+        if (aux != "neg") {
+            var second = this.desempilhaValor();
+            var first = this.desempilhaValor();
+
+            if (!this.isNumber(second) && this.M.has(second)) {
+                second = this.acessaMemoria(second);
+            }
+            if (!this.isNumber(first) && this.M.has(first)) {
+                first = this.acessaMemoria(first);
+            }
+
+            this.empilhaValor(fun(first, second));
+        } else {
+            var first = this.desempilhaValor();
+            this.empilhaValor(fun(first));
+        }
     }
 
     caso3Ass() {
@@ -123,7 +141,7 @@ class SMC {
         }
     }
 
-    case3While() {
+    caso3While() {
         this.desmembra();
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
@@ -134,16 +152,15 @@ class SMC {
         this.empilhaControle(left);
     }
 
-    case4While() {
+    caso4While() {
         var Vcond = this.desempilhaValor();
         var cond = this.desempilhaValor();
         var doAction = this.desempilhaValor();
         var op = this.desempilhaControle();
         if (Vcond) {
+            this.empilhaControle({ left:cond,operator:op,right:doAction });            
             this.empilhaControle(doAction);
-            this.empilhaControle(cond);
-            this.empilhaControle(op);
-            this.empilhaControle(doAction);
+
         }
     }
    
