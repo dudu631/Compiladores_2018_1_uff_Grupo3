@@ -12,27 +12,42 @@ lay.run();
 
 function evalSMC(smc) {
     console.log("\n")
-	
-	console.log(JSON.parse(JSON.stringify(smc)));
+    console.log(JSON.parse(JSON.stringify(smc)));
 
     if (smc.C.length > 0) {
 
         var atual = smc.C[smc.C.length - 1]; //peek stack
 
         if (atual.hasOwnProperty('operator')) {
-            smc.caso3();
-            evalSMC(smc);
-        } else if (parseInt(atual) > 0) {
-            smc.caso1();
-            evalSMC(smc);
+            if (atual.operator == "ass") {
+                smc.organizaAtribuicao();
+            } else if (atual.operator == "if") {
+                smc.organizaIf();
+            } else if (atual.operator == "while") {
+                smc.organizaWhile();
+            } else {
+                smc.organizaExpressoes();
+            }
+        
         } else if (verificarReservado(atual)) {
-            smc.caso4(reserved.get(atual));
-            evalSMC(smc);
-        }       
+            if (reserved.get(atual) != 0) {
+                smc.resolveExpressoes(reserved.get(atual));
+            } else {
+                smc.resolveComando(atual);
+            }
+        
+        } else{
+            smc.caso1();
+        }
+
+        eval(smc);
+        
     }
+
     return smc;
 
 }
+
 
 function verificarReservado(key) {
     return reserved.has(key) ? true : false;

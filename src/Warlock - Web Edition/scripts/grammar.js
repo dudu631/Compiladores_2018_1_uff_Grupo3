@@ -8,10 +8,47 @@
         if (!rest.length) return val;
         var first = rest.shift();
         return {left:val, operator:first[0], right:rightAssoc(first[1], rest)};
-    }
+    }   
 }
 
-Start = E1
+Start = Block?
+
+Block= _"{"_ v:Sequence _"}"_ {return v}
+
+Sequence =
+	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }
+     / l:Command ';'? {return l}
+     
+Command =
+	Assignment
+    /If
+	/While
+    
+If =
+	_ op:"if" __  l:BoolExpression r:Command "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /_ op:"if" __ l:BoolExpression r:Command "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /_ op:"if" __ l:BoolExpression r:Block "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /_ op:"if" __ l:BoolExpression r:Block "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
+
+While =
+	_ op:"while" __ l:BoolExpression r:Block {return {left:l,operator:op.trim(),right:r}}
+
+
+Expression
+	=  BoolExpression
+    / AritExpression
+   
+BoolExpression
+	= v:(AritExpression boolop)* rest:AritExpression { return leftAssoc(v, rest); }
+    / v:(primary boolop)* rest:AritExpression { return leftAssoc(v, rest); }
+    / v:(AritExpression boolop)* rest:primary { return leftAssoc(v, rest); }     
+	/ Negate
+
+Negate 
+	= v:neg rest:BoolExpression {return {left:rest, operator:v, right:null}}
+    
+AritExpression
+	= E1
 
 E1 = v:(E2 (add / sub))* rest:E2
      { return leftAssoc(v, rest); }
@@ -19,13 +56,16 @@ E1 = v:(E2 (add / sub))* rest:E2
 E2 = v:(primary (mul / div))* rest:primary
      { return leftAssoc(v, rest); }
  
+Assignment
+	= l: ident op:":=" r:Expression {return {left:l, operator:"ass", right:r}}
+     
 primary
   = number
   / ident
   /BracketedExpression
 
 BracketedExpression
-  =	"("expression:E1")"  { return expression }
+  =	_ "("expression:Expression")" _  { return expression }
 
 number
   = _ digits:[0-9]+ _  { return digits.join(""); }
@@ -33,6 +73,15 @@ number
 ident 
     = _ head: [a-zA-Z] tail:[a-zA-Z0-9]*  _ {return head.concat(tail.join(""));}
 
+boolop
+	= "==" { return "eq" }
+    / ">=" { return "ge" }
+    / ">" {	return "gt" }
+    / "<=" {return "le" }
+    / "<" {return "lt" }
+
+neg
+	= _"~"_ {return "neg"}
 
 add
     = "+" { return "add" }
@@ -50,5 +99,5 @@ div
 _  = [ \\t\\r\\n]*
 
 // mandatory whitespace
-__ = [ \\t\\r\\n]+  
+__ = [ \\t\\r\\n]+
 `;
