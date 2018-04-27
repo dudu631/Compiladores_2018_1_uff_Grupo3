@@ -23,7 +23,7 @@ $( "#gerar" ).click(function() {
 		lay.run();
 		$("#exp").removeClass("is-invalid");
 	}catch(error){
-		
+		$("#mensagemErroExp").text(error);
 		$("#exp").addClass("is-invalid");
 	}
 
@@ -45,7 +45,9 @@ $( "#compilar" ).click(function() {
 		count=0;
 		output = evalSMC(new SMC([], new Map(), [tree]));
 	}catch(err){
-		$("#codigoInput").addClass("is-invalid");
+		$("#mensagemErroCod").text(err);
+		$("#codigoInput").addClass("is-invalid");		
+		
 	}
 });
 

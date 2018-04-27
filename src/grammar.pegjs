@@ -79,7 +79,9 @@ boolop
     / ">" {	return "gt" }
     / "<=" {return "le" }
     / "<" {return "lt" }
-
+	/ "&&" {return "and"}
+    / "||" {return "or"}
+    
 neg
 	= _"~"_ {return "neg"}
 

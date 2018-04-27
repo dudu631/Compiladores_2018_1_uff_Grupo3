@@ -13,7 +13,8 @@ reserved.set("ass", 0);
 reserved.set("if", 0);
 reserved.set("while", 0);
 reserved.set("print", 0);
-
+reserved.set("and", and);
+reserved.set("or", or);
 
 
 function add(a, b) {
@@ -56,3 +57,10 @@ function neg(a) {
     return !a;
 }
 
+function and(a, b) {
+    return a && b;
+}
+
+function or(a, b) {
+    return a || b;
+}

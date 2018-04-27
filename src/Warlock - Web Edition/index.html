@@ -28,8 +28,11 @@
             
             <!-- Tab content -->
             <div id="graphView" class="tabcontent">
-                <div class="centered form-group has-danger" > 
+                <div class="centered form-group" > 
                     <input id='exp' class="form-control form-control-lg" type="text" placeholder="{a:=b}" style="margin-bottom:10px;text-align: center;">
+                    <div class="invalid-feedback" style="margin-bottom: 10px">
+                        <span id="mensagemErroExp" style="font-size: 20px"></span>
+                    </div>
                     <div>            
                         <button id="gerar" class="btn btn-success">Gerar Arvore</button>
                         <button id='reset' class="btn btn-primary">Resetar Visao</button>
@@ -49,7 +52,10 @@
                     <div class="row align-items-center">
                         <div class="col-lg-6" >
                                 <h3 style="margin:20px" class="Centered">Código</h2>
-                                <textarea class="form-control" rows="25" id="codigoInput"></textarea>                  
+                                <textarea class="form-control" rows="25" id="codigoInput"></textarea>
+                                <div class="invalid-feedback"  style="margin-bottom: 10px">
+                                    <span id="mensagemErroCod" style="font-size: 20px"></span>
+                                </div>                  
                         </div>
                         <div class="col-lg-1">
                             <div >
