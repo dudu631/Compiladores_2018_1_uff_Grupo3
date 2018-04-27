@@ -52,7 +52,7 @@ class SMC {
     }
 
     //A OP B  ->  A B OP
-    caso3Expressoes() {
+    organizaExpressoes() {
         this.desmembra();
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
@@ -68,12 +68,31 @@ class SMC {
         }
     }
 
-    isNumber(n) {
-        return !isNaN(parseInt(n)) && isFinite(n);
+    resolveComando(cmd) {
+
+        switch (cmd) {
+            case "ass":
+                this.resolveAtribuicao();
+                break;
+            case "if":
+                this.resolveIf();
+                break;
+            case "while":
+                this.resolveWhile();
+                break;
+            case "print":
+                this.resolvePrint();
+                break;
+            default:
+        }        
+    }
+
+    resolvePrint() {
+
     }
 
     //Resolve a operação
-    caso4Expressoes(fun) {
+    resolveExpressoes(fun) {
         var aux = this.desempilhaControle();
 
         if (aux != "neg") {
@@ -94,7 +113,7 @@ class SMC {
         }
     }
 
-    caso3Ass() {
+    organizaAtribuicao() {
         this.desmembra();
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
@@ -110,14 +129,14 @@ class SMC {
         }
     }
 
-    caso4Ass() {
+    resolveAtribuicao() {
         var aux = this.desempilhaControle();
         var valor = this.desempilhaValor();
         var key = this.desempilhaValor();
         this.guardaMemoria(key, valor);
     }
 
-    caso3If() {
+    organizaIf() {
         this.desmembraIf();
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
@@ -129,7 +148,7 @@ class SMC {
         this.empilhaControle(left);
     }
 
-    caso4If() {
+    resolveIf() {
         var condIf = this.desempilhaValor();
         var thenIf = this.desempilhaValor();
         var elseIf = this.desempilhaValor();
@@ -141,7 +160,7 @@ class SMC {
         }
     }
 
-    caso3While() {
+    organizaWhile() {
         this.desmembra();
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
@@ -152,18 +171,21 @@ class SMC {
         this.empilhaControle(left);
     }
 
-    caso4While() {
+    resolveWhile() {
         var Vcond = this.desempilhaValor();
         var cond = this.desempilhaValor();
         var doAction = this.desempilhaValor();
         var op = this.desempilhaControle();
         if (Vcond) {
-            this.empilhaControle({ left:cond,operator:op,right:doAction });            
+            this.empilhaControle({ left: cond, operator: op, right: doAction });
             this.empilhaControle(doAction);
 
         }
     }
-   
+
+    isNumber(n) {
+        return !isNaN(parseInt(n)) && isFinite(n);
+    }
 };
 
 module.exports = SMC;

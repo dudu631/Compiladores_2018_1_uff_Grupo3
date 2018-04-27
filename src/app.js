@@ -19,31 +19,27 @@ function eval(smc) {
 
         if (atual.hasOwnProperty('operator')) {
             if (atual.operator == "ass") {
-                smc.caso3Ass();
+                smc.organizaAtribuicao();
             } else if (atual.operator == "if") {
-                smc.caso3If();
+                smc.organizaIf();
             } else if (atual.operator == "while") {
-                smc.caso3While();
+                smc.organizaWhile();
             } else {
-                smc.caso3Expressoes();
+                smc.organizaExpressoes();
             }
-            eval(smc);
-
+        
         } else if (verificarReservado(atual)) {
             if (reserved.get(atual) != 0) {
-                smc.caso4Expressoes(reserved.get(atual));
-            } else if (atual == "ass") {
-                smc.caso4Ass();
-            } else if (atual == "if") {
-                smc.caso4If();
+                smc.resolveExpressoes(reserved.get(atual));
             } else {
-                smc.caso4While();
+                smc.resolveComando(atual);
             }
-            eval(smc);
+        
         } else{
             smc.caso1();
-            eval(smc);
         }
+
+        eval(smc);
         
     }
 
@@ -70,6 +66,7 @@ function init() {
     reserved.set("ass", 0);
     reserved.set("if", 0);
     reserved.set("while", 0);
+    reserved.set("print", 0);
 }
 
 function add(a, b) {
@@ -111,3 +108,4 @@ function gt(a, b) {
 function neg(a) {
     return !a;
 }
+
