@@ -13,11 +13,11 @@
 
 Start = Block?
 
-Block= _"{"_ v:Sequence+ _"}"_ {return v;}
+Block= _"{"_ v:Sequence _"}"_ {return v}
 
 Sequence =
 	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }
-     / Command
+     / l:Command {return l}
      
 Command =
 	Assignment
@@ -25,24 +25,24 @@ Command =
 	/While
     
 If =
-	op:"if" __  l:BoolExpression r:Command "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
-    /op:"if" __ l:BoolExpression r:Command "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
-    /op:"if" __ l:BoolExpression r:Block "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
-    /op:"if" __ l:BoolExpression r:Block "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
+	_ op:"if" __  l:BoolExpression r:Command "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /_ op:"if" __ l:BoolExpression r:Command "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /_ op:"if" __ l:BoolExpression r:Block "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
+    /_ op:"if" __ l:BoolExpression r:Block "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
 
 While =
-	op:"while" __ l:BoolExpression r:Block {return {left:l,operator:op.trim(),right:r}}
+	_ op:"while" __ l:BoolExpression r:Block {return {left:l,operator:op.trim(),right:r}}
 
 
 Expression
-	= Negate
-    / BoolExpression
+	=  BoolExpression
     / AritExpression
    
 BoolExpression
 	= v:(AritExpression boolop)* rest:AritExpression { return leftAssoc(v, rest); }
     / v:(primary boolop)* rest:AritExpression { return leftAssoc(v, rest); }
     / v:(AritExpression boolop)* rest:primary { return leftAssoc(v, rest); }     
+	/ Negate
 
 Negate 
 	= v:neg rest:BoolExpression {return {left:rest, operator:v, right:null}}
@@ -57,7 +57,7 @@ E2 = v:(primary (mul / div))* rest:primary
      { return leftAssoc(v, rest); }
  
 Assignment
-	= l: ident op:":=" r:Expression {return {left:l, operator:op, right:r}}
+	= l: ident op:":=" r:Expression {return {left:l, operator:"ass", right:r}}
      
 primary
   = number
