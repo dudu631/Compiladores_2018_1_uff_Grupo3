@@ -1,11 +1,9 @@
 ﻿
 class SMC {
-    constructor(E, S, M, C) {
-        this.E = E;
+    constructor(S, M, C) {
         this.S = S;
         this.M = M;
         this.C = C;
-        this.address = 0;
     }
 
     empilhaControle(x) {
@@ -25,32 +23,13 @@ class SMC {
     }
 
     acessaMemoria(key) {
-        //Obtem o endereço da variavel no ambiente
-        var loc = this.E.get(key);
-
-        //Busca na memoria o valor
-        return this.M.get(loc);
+        return this.M.get(key);
     }
 
     guardaMemoria(key, x) {
-
-        var loc = this.address;
-
-        if (!this.E.has(key)) {
-            //Salva no ambiente o endereco da variavel
-            this.E.set(key, this.address);
-        } else {
-            loc = this.E.get(key);
-        }
-
-        //Salva na memoria o valor
-        this.M.set(loc, x);
-
-        //Aumenta o contador do endereço
-        this.address++;
+        this.M.set(key, x);
     }
-    
-    
+
     //Quebra a arvore e empilha no controle
     desmembra() {
         var tree = this.desempilhaControle();
@@ -97,10 +76,10 @@ class SMC {
             var second = this.desempilhaValor();
             var first = this.desempilhaValor();
 
-            if (!this.isNumber(second) && this.E.has(second)) {
+            if (!this.isNumber(second) && this.M.has(second)) {
                 second = this.acessaMemoria(second);
             }
-            if (!this.isNumber(first) && this.E.has(first)) {
+            if (!this.isNumber(first) && this.M.has(first)) {
                 first = this.acessaMemoria(first);
             }
 
@@ -183,24 +162,12 @@ class SMC {
         var doAction = this.desempilhaValor();
         var op = this.desempilhaControle();
         if (Vcond) {
-            this.empilhaControle({ left: cond, operator: op, right: doAction });            
+            this.empilhaControle({ left: cond, operator: op, right: doAction });
             this.empilhaControle(doAction);
 
-            //========Empilha o ambiente antigo
-            //this.empilhaValor(this.E);
-
-            //========Cria um novo, como uma cópia do antigo
-            //this.E = new Map(this.E);
-
-            //Como diferenciar a 'entrada' no loop pela primeira vez para criar o ambiente novo, sem criar a cada iteração?
-            //Criação de novo token?
-
-            //Como saber que saiu do while/if?
-            //token sinalizador de fim do novo bloco?
-            
-        } 
+        }
     }
-    
+
     resolveComando(cmd) {
 
         switch (cmd) {
