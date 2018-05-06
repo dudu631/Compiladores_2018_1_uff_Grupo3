@@ -39,9 +39,7 @@ Expression
     / AritExpression
    
 BoolExpression
-	= v:(AritExpression boolop)* rest:AritExpression { return leftAssoc(v, rest); }
-    / v:(primary boolop)* rest:AritExpression { return leftAssoc(v, rest); }
-    / v:(AritExpression boolop)* rest:primary { return leftAssoc(v, rest); }     
+	= "("? l:AritExpression op:boolop r:AritExpression ")"? {return {left:l,operator:op,right:r}}    
 	/ Negate
 
 Negate 
@@ -79,7 +77,7 @@ boolop
     / ">" {	return "gt" }
     / "<=" {return "le" }
     / "<" {return "lt" }
-    / "&&" {return "and"}
+	/ "&&" {return "and"}
     / "||" {return "or"}
     
 neg
