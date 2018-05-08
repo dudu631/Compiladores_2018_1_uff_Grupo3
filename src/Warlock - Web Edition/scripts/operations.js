@@ -18,42 +18,47 @@ reserved.set("or", or);
 
 
 function add(a, b) {
-    return a + b;
+    return a.plus(b);
 }
 
 function sub(a, b) {
-    return a - b;
+    return a.minus(b);
 }
 
 function div(a, b) {
-    return a / b;
+    return a.dividedBy(b);
 }
 
 function mul(a, b) {
-    return a * b;
+    return a.multipliedBy(b);
 }
 
 function eq(a, b) {
-    return a == b;
+    return a.isEqualTo(b);
 }
 
 function le(a, b) {
-    return a <= b;
+    return a.isLesserThanOrEqualTo(b);
 }
 
 function lt(a, b) {
-    return a < b;
+    return a.isLesserThan(b);
 }
 
 function ge(a, b) {
-    return a >= b;
+    return a.isGreaterThanOrEqualTo(b);
 }
 
 function gt(a, b) {
-    return a > b;
+    return a.isGreaterThan(b);
 }
 
 function neg(a) {
+    if(BigNumber.isBigNumber(a)){
+
+        return a.negated();
+
+    }
     return !a;
 }
 

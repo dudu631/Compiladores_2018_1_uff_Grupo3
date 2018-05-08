@@ -107,17 +107,12 @@ class SMC {
                 first = this.acessaMemoria(first);
             }
 
-            if (this.isNumber(first) && this.isNumber(second)) {
-                this.empilhaValor(fun(parseInt(first), parseInt(second)));
-            } else if (this.isNumber(first) && !this.isNumber(second)) {
-                this.empilhaValor(fun(parseInt(first), second));
-            } else if (!this.isNumber(first) && this.isNumber(second)){
-                this.empilhaValor(fun(first, parseInt(second)));
-            } else {
-                this.empilhaValor(fun(first, second));
-            }
+           
+                this.empilhaValor(fun(BigNumber(first), BigNumber(second)));
+            
         } else {
             var first = this.desempilhaValor();
+
             this.empilhaValor(fun(first));
         }
     }
