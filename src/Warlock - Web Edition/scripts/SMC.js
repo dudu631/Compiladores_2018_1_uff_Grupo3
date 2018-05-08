@@ -107,8 +107,16 @@ class SMC {
                 first = this.acessaMemoria(first);
             }
 
-           
+            //Verificar necessidade posteriormente de todos os casos
+            if (this.isNumber(first) && this.isNumber(second)) {
                 this.empilhaValor(fun(BigNumber(first), BigNumber(second)));
+            } else if (this.isNumber(first) && !this.isNumber(second)) {
+                this.empilhaValor(fun(BigNumber(first), second));
+            } else if (!this.isNumber(first) && this.isNumber(second)){
+                this.empilhaValor(fun(first, BigNumber(second)));
+            } else {
+                this.empilhaValor(fun(first, second));
+            }
             
         } else {
             var first = this.desempilhaValor();
