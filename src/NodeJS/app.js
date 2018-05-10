@@ -6,8 +6,8 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{x:=5;y:=1; while ~(x==0){y:=x*y;x:=x-1}}");
-var final = eval(new SMC(new Map(),[], new Map(), [tree]));
+var tree = parser.parse("{x:=1; if (x==0){x:=0;y:=1;} else {x:=3; } }");
+var final = eval(new SMC(null, [], new Map(), [tree]));
 
 function eval(smc) {
     console.log("\n")
@@ -24,6 +24,8 @@ function eval(smc) {
                 smc.organizaIf();
             } else if (atual.operator == "while") {
                 smc.organizaWhile();
+            } else if (atual.operator == "block") {
+                smc.organizaBlock();
             } else {
                 smc.organizaExpressoes();
             }
@@ -63,6 +65,7 @@ function init() {
     reserved.set("print", 0);
     reserved.set("and", and);
     reserved.set("or", or);
+    reserved.set("block", 0);
 }
 
 function add(a, b) {

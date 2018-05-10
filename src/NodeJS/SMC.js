@@ -49,8 +49,8 @@ class SMC {
         //Aumenta o contador do endereço
         this.address++;
     }
-    
-    
+
+
     //Quebra a arvore e empilha no controle
     desmembra() {
         var tree = this.desempilhaControle();
@@ -108,7 +108,7 @@ class SMC {
                 this.empilhaValor(fun(parseInt(first), parseInt(second)));
             } else if (this.isNumber(first) && !this.isNumber(second)) {
                 this.empilhaValor(fun(parseInt(first), second));
-            } else if (!this.isNumber(first) && this.isNumber(second)){
+            } else if (!this.isNumber(first) && this.isNumber(second)) {
                 this.empilhaValor(fun(first, parseInt(second)));
             } else {
                 this.empilhaValor(fun(first, second));
@@ -183,24 +183,11 @@ class SMC {
         var doAction = this.desempilhaValor();
         var op = this.desempilhaControle();
         if (Vcond) {
-            this.empilhaControle({ left: cond, operator: op, right: doAction });            
+            this.empilhaControle({ left: cond, operator: op, right: doAction });
             this.empilhaControle(doAction);
-
-            //========Empilha o ambiente antigo
-            //this.empilhaValor(this.E);
-
-            //========Cria um novo, como uma cópia do antigo
-            //this.E = new Map(this.E);
-
-            //Como diferenciar a 'entrada' no loop pela primeira vez para criar o ambiente novo, sem criar a cada iteração?
-            //Criação de novo token?
-
-            //Como saber que saiu do while/if?
-            //token sinalizador de fim do novo bloco?
-            
-        } 
+        }
     }
-    
+
     resolveComando(cmd) {
 
         switch (cmd) {
@@ -216,9 +203,30 @@ class SMC {
             case "print":
                 this.resolvePrint();
                 break;
+            case "block":
+                this.resolveBlock();
+                break;
             default:
         }
     }
+
+    organizaBlock() {
+
+        this.organizaExpressoes();
+
+        this.empilhaValor(this.E == null ? new Map() : this.E);
+
+        this.E = new Map(this.E);
+    }
+
+    resolveBlock() {
+        //Tira o block do controle
+        var dispose = this.desempilhaControle();
+
+        //Retoma o ambiente externo
+        this.E = this.desempilhaValor();
+    }
+
 
     isNumber(n) {
         return !isNaN(parseInt(n)) && isFinite(n);

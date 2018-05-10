@@ -13,7 +13,7 @@
 
 Start = Block?
 
-Block= _"{"_ v:Sequence _"}"_ {return v}
+Block= _"{"_ v:Sequence _"}"_ {return {left:v,operator:"block",right:null}}
 
 Sequence =
 	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }
@@ -31,7 +31,7 @@ If =
     /_ op:"if" __ l:BoolExpression r:Block "else" a:Block {return{left:l,operator:op.trim(),right:r,adit:a}}
 
 While =
-	_ op:"while" __ l:BoolExpression r:Block {return {left:l,operator:op.trim(),right:r}}
+	_ op:"while" __ l:BoolExpression r:Block {return {left:{left:l,operator:op.trim(),right:r.left},operator:"block",right:null}}
 
 
 Expression
