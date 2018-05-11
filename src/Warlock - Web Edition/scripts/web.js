@@ -15,7 +15,7 @@ $( "#gerar" ).click(function() {
 	try{
 		var tree = parser.parse($("#exp").val());
 
-		evalSMC(new SMC([], new Map(), [tree]));
+		evalSMC(new SMC(null,[], new Map(), [tree]));
 
 		addNodes(tree);
 
@@ -43,7 +43,7 @@ $( "#compilar" ).click(function() {
 		tree = parser.parse(input);
 
 		count=0;
-		output = evalSMC(new SMC([], new Map(), [tree]));
+		output = evalSMC(new SMC(null,[], new Map(), [tree]));
 	}catch(err){
 		$("#mensagemErroCod").text(err);
 		$("#codigoInput").addClass("is-invalid");		

@@ -7,7 +7,7 @@ class SMC {
         this.C = C;
         this.address = 0;
     }
-
+    
     empilhaControle(x) {
         this.C.push(x);
     }

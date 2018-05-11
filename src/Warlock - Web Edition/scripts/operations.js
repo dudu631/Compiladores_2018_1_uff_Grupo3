@@ -15,6 +15,7 @@ reserved.set("while", 0);
 reserved.set("print", 0);
 reserved.set("and", and);
 reserved.set("or", or);
+reserved.set("block", 0);
 
 
 function add(a, b) {

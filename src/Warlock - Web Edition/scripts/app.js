@@ -1,12 +1,12 @@
 var parser = peg.generate(grammar);
 var id = 0;
 
-var input = "{x:=5;y:=1; while ~(x==0){y:=x*y;x:=x-1}}";
+var input = "{x:=1; if (x==0){x:=0;y:=1;} else {x:=3; }}";
 
 var tree = parser.parse(input);
 
 var count=0;
-var output = evalSMC(new SMC([], new Map(), [tree]));
+var output = evalSMC(new SMC(null,[], new Map(), [tree]));
 
 function evalSMC(smc) {
     count++;
@@ -29,6 +29,8 @@ function evalSMC(smc) {
                 smc.organizaIf();
             } else if (atual.operator == "while") {
                 smc.organizaWhile();
+            } else if (atual.operator == "block") {
+                smc.organizaBlock();
             } else {
                 smc.organizaExpressoes();
             }

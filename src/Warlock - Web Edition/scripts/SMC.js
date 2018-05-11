@@ -1,10 +1,13 @@
-﻿
-class SMC {
-
-    constructor(S, M, C) {
+﻿class SMC {
+    constructor(E, S, M, C) {
+        this.E = E;
         this.S = S;
         this.M = M;
         this.C = C;
+        this.address = 0;
+    }
+    setAddress(x){
+        this.address=x;
     }
 
     empilhaControle(x) {
@@ -24,12 +27,31 @@ class SMC {
     }
 
     acessaMemoria(key) {
-        return this.M.get(key);
+        //Obtem o endereço da variavel no ambiente
+        var loc = this.E.get(key);
+
+        //Busca na memoria o valor
+        return this.M.get(loc);
     }
 
     guardaMemoria(key, x) {
-        this.M.set(key, x);
+
+        var loc = this.address;
+
+        if (!this.E.has(key)) {
+            //Salva no ambiente o endereco da variavel
+            this.E.set(key, this.address);
+        } else {
+            loc = this.E.get(key);
+        }
+
+        //Salva na memoria o valor
+        this.M.set(loc, x);
+
+        //Aumenta o contador do endereço
+        this.address++;
     }
+
 
     //Quebra a arvore e empilha no controle
     desmembra() {
@@ -69,29 +91,6 @@ class SMC {
         }
     }
 
-    resolveComando(cmd) {
-
-        switch (cmd) {
-            case "ass":
-                this.resolveAtribuicao();
-                break;
-            case "if":
-                this.resolveIf();
-                break;
-            case "while":
-                this.resolveWhile();
-                break;
-            case "print":
-                this.resolvePrint();
-                break;
-            default:
-        }        
-    }
-
-    resolvePrint() {
-
-    }
-
     //Resolve a operação
     resolveExpressoes(fun) {
         var aux = this.desempilhaControle();
@@ -100,27 +99,24 @@ class SMC {
             var second = this.desempilhaValor();
             var first = this.desempilhaValor();
 
-            if (!this.isNumber(second) && this.M.has(second)) {
+            if (!this.isNumber(second) && this.E.has(second)) {
                 second = this.acessaMemoria(second);
             }
-            if (!this.isNumber(first) && this.M.has(first)) {
+            if (!this.isNumber(first) && this.E.has(first)) {
                 first = this.acessaMemoria(first);
             }
 
-            //Verificar necessidade posteriormente de todos os casos
             if (this.isNumber(first) && this.isNumber(second)) {
                 this.empilhaValor(fun(BigNumber(first), BigNumber(second)));
             } else if (this.isNumber(first) && !this.isNumber(second)) {
                 this.empilhaValor(fun(BigNumber(first), second));
-            } else if (!this.isNumber(first) && this.isNumber(second)){
+            } else if (!this.isNumber(first) && this.isNumber(second)) {
                 this.empilhaValor(fun(first, BigNumber(second)));
             } else {
                 this.empilhaValor(fun(first, second));
             }
-            
         } else {
             var first = this.desempilhaValor();
-
             this.empilhaValor(fun(first));
         }
     }
@@ -191,19 +187,64 @@ class SMC {
         if (Vcond) {
             this.empilhaControle({ left: cond, operator: op, right: doAction });
             this.empilhaControle(doAction);
-
         }
     }
+
+    resolveComando(cmd) {
+
+        switch (cmd) {
+            case "ass":
+                this.resolveAtribuicao();
+                break;
+            case "if":
+                this.resolveIf();
+                break;
+            case "while":
+                this.resolveWhile();
+                break;
+            case "print":
+                this.resolvePrint();
+                break;
+            case "block":
+                this.resolveBlock();
+                break;
+            default:
+        }
+    }
+
+    organizaBlock() {
+
+        this.organizaExpressoes();
+
+        this.empilhaValor(this.E == null ? new Map() : this.E);
+
+        this.E = new Map(this.E);
+    }
+
+    resolveBlock() {
+        //Tira o block do controle
+        var dispose = this.desempilhaControle();
+
+        //Retoma o ambiente externo
+        this.E = this.desempilhaValor();
+    }
+
 
     isNumber(n) {
         return !isNaN(parseInt(n)) && isFinite(n);
     }
-   
+
+    resolvePrint() {
+
+    }
+
     json(){
 
         var temp=this.strMapToObj(this.M);
-
-        return JSON.stringify(new SMC(this.S, temp, this.C));
+        var ambiente = this.E!=null? this.strMapToObj(this.E):null;
+        var smc = new SMC(ambiente,this.S, temp, this.C);
+        smc.setAddress(this.address);
+        return JSON.stringify(smc);
     }
 
     //Funcao auxiliar para printar o map 
@@ -217,5 +258,3 @@ class SMC {
         return obj;
     }
 };
-
-
