@@ -7,7 +7,10 @@ class SMC {
         this.C = C;
         this.address = 0;
     }
-    
+    setAddress(x) {
+        this.address = x;
+    }
+
     empilhaControle(x) {
         this.C.push(x);
     }
@@ -105,11 +108,11 @@ class SMC {
             }
 
             if (this.isNumber(first) && this.isNumber(second)) {
-                this.empilhaValor(fun(parseInt(first), parseInt(second)));
+                this.empilhaValor(fun(BigNumber(first), BigNumber(second)));
             } else if (this.isNumber(first) && !this.isNumber(second)) {
-                this.empilhaValor(fun(parseInt(first), second));
+                this.empilhaValor(fun(BigNumber(first), second));
             } else if (!this.isNumber(first) && this.isNumber(second)) {
-                this.empilhaValor(fun(first, parseInt(second)));
+                this.empilhaValor(fun(first, BigNumber(second)));
             } else {
                 this.empilhaValor(fun(first, second));
             }
@@ -234,6 +237,26 @@ class SMC {
 
     resolvePrint() {
 
+    }
+
+    json() {
+
+        var temp = this.strMapToObj(this.M);
+        var ambiente = this.E != null ? this.strMapToObj(this.E) : null;
+        var smc = new SMC(ambiente, this.S, temp, this.C);
+        smc.setAddress(this.address);
+        return JSON.stringify(smc);
+    }
+
+    //Funcao auxiliar para printar o map 
+    strMapToObj(strMap) {
+        let obj = Object.create(null);
+        for (let [k, v] of strMap) {
+            // We don’t escape the key '__proto__'
+            // which can cause problems on older engines
+            obj[k] = v;
+        }
+        return obj;
     }
 };
 
