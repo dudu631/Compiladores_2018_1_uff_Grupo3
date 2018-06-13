@@ -96,7 +96,7 @@ class SMC {
             
             var loc = this.E.get(key);
 
-            if(typeof loc == Location){
+            if(loc instanceof Location){
                 this.M.atualizaMemoria(loc, value);
             }else{
                 throw "Não é possível mudar o valor de uma constante."
