@@ -33,8 +33,8 @@ class Memory {
 
     atualizaMemoria(loc, value) {
 
-        if (this.M.has(loc)) {
-            this.M.set(loc, value);
+        if (this.M.has(loc.address)) {
+            this.M.set(loc.address, value);
         }
     }
 

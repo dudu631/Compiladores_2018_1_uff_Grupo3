@@ -7,7 +7,7 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{var x=1; if (x==0){x:=0;x:=1;} else {x:=3; }}");
+var tree = parser.parse("{var x=1; while (x==1){x:=2;}}");
 var final = eval(new SMC(null, [], new Map(), [tree]));
 
 function eval(smc) {
