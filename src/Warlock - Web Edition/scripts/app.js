@@ -14,7 +14,7 @@ function evalSMC(smc) {
     console.log("Passo "+count);
     
     console.log(JSON.parse(smc.json()));
-    $("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n======================Passo "+count+"============================\n");
+    $("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n==============Passo "+count+"==============\n");
     $("#resultadoOutput").val( $("#resultadoOutput").val() + smc.json());
 
     
@@ -31,23 +31,25 @@ function evalSMC(smc) {
                 smc.organizaWhile();
             } else if (atual.operator == "block") {
                 smc.organizaBlock();
+            } else if (atual.operator == "decl") {
+                smc.organizaDeclaracao();
             } else {
                 smc.organizaExpressoes();
             }
-        
+
         } else if (verificarReservado(atual)) {
             if (reserved.get(atual) != 0) {
                 smc.resolveExpressoes(reserved.get(atual));
             } else {
                 smc.resolveComando(atual);
             }
-        
-        } else{
+
+        } else {
             smc.caso1();
         }
 
         evalSMC(smc);
-        
+
     }
 
     return smc;

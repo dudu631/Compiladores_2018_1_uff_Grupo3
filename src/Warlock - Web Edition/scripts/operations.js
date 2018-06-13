@@ -16,6 +16,11 @@ reserved.set("print", 0);
 reserved.set("and", and);
 reserved.set("or", or);
 reserved.set("block", 0);
+reserved.set("decl", 0);
+reserved.set("ini", 0);
+reserved.set("iniSeq", 0);
+reserved.set("declSeq", 0);
+
 
 
 function add(a, b) {

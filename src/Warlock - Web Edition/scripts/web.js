@@ -18,9 +18,10 @@ $( "#gerar" ).click(function() {
 		evalSMC(new SMC(null,[], new Map(), [tree]));
 
 		addNodes(tree);
-
+		
 		var lay = cy.makeLayout({name: 'dagre'});
 		lay.run();
+		
 		$("#exp").removeClass("is-invalid");
 	}catch(error){
 		$("#mensagemErroExp").text(error);

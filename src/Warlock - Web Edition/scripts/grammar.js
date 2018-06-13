@@ -16,21 +16,23 @@ Block= _"{"_ l:DeclSeq?  r:Sequence? _"}"_ {return {left:l,operator:"block",righ
 Sequence =	  
 	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }     
      / l:Command ';'? {return l}
-     / l:DeclSeq ';' r:Sequence { return{left:l,operator:"block",right:r};}
-     / l:DeclSeq ';'  { return{left:l,operator:"block",right:null};}
      
 Command =
 	Assignment
     /If
 	/While
+    
 DeclSeq=
 	l:Declaration';' r:DeclSeq{return {left:l,operator:'declSeq',right:r}}
     /v:Declaration ';' {return v}
+    
 Declaration =
 	l:declop __ r:IniSeq {return {left:l,operator:'decl',right:r}}
+    
 IniSeq =
 	l:Ini',' r:IniSeq {return {left:l,operator:'iniSeq',right:r}}
     /Ini 
+    
 Ini =
 	l:ident op:'=' r:primary {return {left:l,operator:'ini',right:r}}
  
