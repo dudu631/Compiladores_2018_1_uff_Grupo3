@@ -7,7 +7,7 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{x:=1; if (x==0){x:=0;y:=1;} else {x:=3; } }");
+var tree = parser.parse("{var x=1; if (x==0){x:=0;x:=1;} else {x:=3; }}");
 var final = eval(new SMC(null, [], new Map(), [tree]));
 
 function eval(smc) {
@@ -27,6 +27,8 @@ function eval(smc) {
                 smc.organizaWhile();
             } else if (atual.operator == "block") {
                 smc.organizaBlock();
+            } else if (atual.operator == "decl") {
+                smc.organizaDeclaracao();
             } else {
                 smc.organizaExpressoes();
             }
@@ -72,6 +74,10 @@ function init() {
     reserved.set("and", and);
     reserved.set("or", or);
     reserved.set("block", 0);
+    reserved.set("decl", 0);
+    reserved.set("ini", 0);
+    reserved.set("iniSeq", 0);
+    reserved.set("declSeq", 0);
 }
 
 function add(a, b) {

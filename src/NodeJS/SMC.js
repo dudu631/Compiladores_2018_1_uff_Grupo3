@@ -1,12 +1,53 @@
 ﻿var BigNumber = require('bignumber.js');
 
+class Location {
+
+    constructor(address) {
+        this.address = address;
+    }
+
+}
+
+class Memory {
+
+    constructor(M) {
+        this.M = M;
+        this.address = 0;
+    }
+
+    acessaMemoria(loc) {
+        return this.M.get(loc.address);
+    }
+
+    insereMemoria(value) {
+        var loc = new Location(this.address);
+
+        //Salva na memoria o valor
+        this.M.set(loc.address, value);
+
+        //Aumenta o contador do endereço
+        this.address++;
+
+        return loc;
+    }
+
+    atualizaMemoria(loc, value) {
+
+        if (this.M.has(loc)) {
+            this.M.set(loc, value);
+        }
+    }
+
+}
+
+
 class SMC {
     constructor(E, S, M, C) {
         this.E = E;
         this.S = S;
-        this.M = M;
+        this.M = new Memory(M);
         this.C = C;
-        this.address = 0;
+
     }
     setAddress(x) {
         this.address = x;
@@ -28,32 +69,41 @@ class SMC {
         return this.S.pop();
     }
 
-    acessaMemoria(key) {
+    declaraConstante(ident, value) {
+
+        this.E.set(ident, value);
+    }
+
+    declaraVariavel(ident, value) {
+
+        //insere na memoria e obtem a ref
+        var loc = this.M.insereMemoria(value);
+
+        //atualiza o ambiente(que ainda esta sendo criado nesse passo) com o identificador e sua Loc
+        this.E.set(ident, loc);
+
+    }
+
+    getValorVariavel(ident) {
         //Obtem o endereço da variavel no ambiente
-        var loc = this.E.get(key);
+        var loc = this.E.get(ident);
 
         //Busca na memoria o valor
-        return this.M.get(loc);
+        return this.M.acessaMemoria(loc);
     }
 
-    guardaMemoria(key, x) {
+    atualizaVariavel(key, value) {
 
-        var loc = this.address;
+        if (this.E.has(key)) {
 
-        if (!this.E.has(key)) {
-            //Salva no ambiente o endereco da variavel
-            this.E.set(key, this.address);
+            var loc = this.E.get(key);
+            this.M.atualizaMemoria(loc, value);
+
         } else {
-            loc = this.E.get(key);
+            //EXCEPTION - PARAR O PROGRAMA
         }
 
-        //Salva na memoria o valor
-        this.M.set(loc, x);
-
-        //Aumenta o contador do endereço
-        this.address++;
     }
-
 
     //Quebra a arvore e empilha no controle
     desmembra() {
@@ -82,7 +132,7 @@ class SMC {
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
         var right = this.desempilhaControle();
-        if (typeof (op) != 'undefined' && op != null && op != "seq") {
+        if (typeof (op) != 'undefined' && op != null && op != "seq" && op!="iniSeq" && op!= "declSeq") {
             this.empilhaControle(op);
         }
         if (typeof (right) != 'undefined' && right != null) {
@@ -102,10 +152,10 @@ class SMC {
             var first = this.desempilhaValor();
 
             if (!this.isNumber(second) && this.E.has(second)) {
-                second = this.acessaMemoria(second);
+                second = this.getValorVariavel(second);
             }
             if (!this.isNumber(first) && this.E.has(first)) {
-                first = this.acessaMemoria(first);
+                first = this.getValorVariavel(first);
             }
 
             if (this.isNumber(first) && this.isNumber(second)) {
@@ -143,7 +193,7 @@ class SMC {
         var aux = this.desempilhaControle();
         var valor = this.desempilhaValor();
         var key = this.desempilhaValor();
-        this.guardaMemoria(key, valor);
+        this.atualizaVariavel(key, valor);
     }
 
     organizaIf() {
@@ -210,6 +260,12 @@ class SMC {
             case "block":
                 this.resolveBlock();
                 break;
+            case "decl":
+                this.resolveDeclaracao();
+                break;
+            case "ini":
+                this.resolveIni();
+                break;
             default:
         }
     }
@@ -231,7 +287,48 @@ class SMC {
         this.E = this.desempilhaValor();
     }
 
+    organizaDeclaracao() {
 
+        var tree = this.desempilhaControle();
+        //Empilha primeiro para saber quando acabar a Declaracao e assim conseguir remover o varConst da pilha de valor
+        this.empilhaControle(tree.operator);
+
+        //Empilha o resto no controle(ini, iniseq)
+        this.empilhaControle(tree.right);
+
+        //Empilha o Var ou Const em Valor
+        this.empilhaValor(tree.left);
+              
+    }   
+
+    resolveDeclaracao() {
+        //remove o decl de controle
+        this.desempilhaControle();
+
+        //remove o varConst de valor
+        this.desempilhaValor();
+    }
+    
+    resolveIni() {
+        //Tira o ini da pilha de controle
+        this.desempilhaControle();
+
+        //Desempilha da pilha de valor o identificador, seu valor e o controle de var ou const
+        var value = this.desempilhaValor();
+        var ident = this.desempilhaValor();
+        var varConst = this.desempilhaValor();
+
+        if (varConst == "var") {
+            this.declaraVariavel(ident, value);
+        } else if (varConst == "const") {
+            this.declaraConstante(ident, value);
+        } else {
+            Console.log("======DEBUG==========Erro: esperado var const da pilha de valor");
+        }
+
+        this.empilhaValor(varConst);
+    }
+    
     isNumber(n) {
         return !isNaN(parseInt(n)) && isFinite(n);
     }
