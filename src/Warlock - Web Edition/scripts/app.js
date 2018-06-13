@@ -1,12 +1,12 @@
 var parser = peg.generate(grammar);
 var id = 0;
 
-var input = "{x:=1; if (x==0){x:=0;y:=1;} else {x:=3; }}";
+var input = "{const x=1; var y=2;}";
 
 var tree = parser.parse(input);
 
 var count=0;
-var output = evalSMC(new SMC(null,[], new Map(), [tree]));
+var output = evalSMC(new SMC(new Map(),[], new Map(), [tree]));
 
 function evalSMC(smc) {
     count++;
@@ -15,8 +15,11 @@ function evalSMC(smc) {
     
     console.log(JSON.parse(smc.json()));
     $("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n==============Passo "+count+"==============\n");
-    $("#resultadoOutput").val( $("#resultadoOutput").val() + smc.json());
-
+    var ambiente = smc.E != null ? smc.strMapToObj(smc.E) : null;
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"E: " +JSON.stringify(ambiente))
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\nS: " +JSON.stringify(smc.S));
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\nM: " +JSON.stringify(smc.strMapToObj(smc.M.M)));
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\nC: " +JSON.stringify(smc.C));
     
     if (smc.C.length > 0) {
 
@@ -58,6 +61,6 @@ function evalSMC(smc) {
 
 
 function verificarReservado(key) {
-    return reserved.has(key) ? true : false;
+    return reserved.has(key);
 }
 

@@ -93,12 +93,17 @@ class SMC {
     atualizaVariavel(key, value) {
 
         if (this.E.has(key)) {
-
+            
             var loc = this.E.get(key);
-            this.M.atualizaMemoria(loc, value);
 
+            if(typeof loc == Location){
+                this.M.atualizaMemoria(loc, value);
+            }else{
+                throw "Não é possível mudar o valor de uma constante."
+            }
+            
         } else {
-            //EXCEPTION - PARAR O PROGRAMA
+            throw "Variável '"+key.toString()+"' não declarada.";
         }
 
     }
@@ -321,7 +326,7 @@ class SMC {
         } else if (varConst == "const") {
             this.declaraConstante(ident, value);
         } else {
-            Console.log("======DEBUG==========Erro: esperado var const da pilha de valor");
+            Console.log("======DEBUG==========Erro: Algo deu errado,era esperado 'var' ou 'const' da pilha de valor");
         }
 
         this.empilhaValor(varConst);
