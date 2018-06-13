@@ -1,6 +1,7 @@
 var peg = require("pegjs");
 var fs = require("fs");
 const SMC = require("./SMC.js");
+var BigNumber = require('bignumber.js');
 
 var reserved = new Map();
 init();

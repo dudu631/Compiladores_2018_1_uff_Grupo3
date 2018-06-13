@@ -1,4 +1,5 @@
-﻿
+﻿var BigNumber = require('bignumber.js');
+
 class SMC {
     constructor(E, S, M, C) {
         this.E = E;
