@@ -52,7 +52,7 @@ function eval(smc) {
 }
 
 function verificarReservado(key) {
-    return reserved.has(key) ? true : false;
+    return reserved.has(key);
 }
 
 // Primitive functions
