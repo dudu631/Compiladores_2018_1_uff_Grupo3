@@ -44,11 +44,11 @@ function eq(a, b) {
 }
 
 function le(a, b) {
-    return a.isLesserThanOrEqualTo(b);
+    return a.isLessThanOrEqualTo(b);
 }
 
 function lt(a, b) {
-    return a.isLesserThan(b);
+    return a.isLessThan(b);
 }
 
 function ge(a, b) {
