@@ -34,7 +34,7 @@ IniSeq =
     /Ini 
     
 Ini =
-	l:ident op:'=' r:primary {return {left:l,operator:'ini',right:r}}
+	l:ident op:'=' r:Expression {return {left:l,operator:'ini',right:r}}
  
 If =
 	_ op:"if" __  l:BoolExpression r:Command "else" a:Command {return{left:l,operator:op.trim(),right:r,adit:a}}
