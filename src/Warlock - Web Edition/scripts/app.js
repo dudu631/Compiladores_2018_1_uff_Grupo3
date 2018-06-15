@@ -27,9 +27,7 @@ function evalSMC(smc) {
         var atual = smc.C[smc.C.length - 1]; //peek stack
 
         if (atual.hasOwnProperty('operator')) {
-            if (atual.operator == "ass") {
-                smc.organizaAtribuicao();
-            } else if (atual.operator == "if") {
+            if (atual.operator == "if") {
                 smc.organizaIf();
             } else if (atual.operator == "while") {
                 smc.organizaWhile();

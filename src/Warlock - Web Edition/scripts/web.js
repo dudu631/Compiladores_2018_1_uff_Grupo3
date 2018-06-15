@@ -46,6 +46,9 @@ $( "#compilar" ).click(function() {
 		count=0;
 		output = evalSMC(new SMC(new Map(),[], new Map(), [tree]));
 		$("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n===============END===============\n");
+
+		var $textarea = $('#resultadoOutput');
+		$textarea.scrollTop($textarea[0].scrollHeight);
 	}catch(err){
 		$("#mensagemErroCod").text(err);
 		$("#codigoInput").addClass("is-invalid");		

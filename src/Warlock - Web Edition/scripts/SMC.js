@@ -91,12 +91,13 @@ class SMC {
     }
 
     atualizaVariavel(key, value) {
-
+        //Verifica se ela existe no ambiente
         if (this.E.has(key)) {
             
             var loc = this.E.get(key);
 
             if(loc instanceof Location){
+                //Solicita a memoria atualizacao daquela localizacao
                 this.M.atualizaMemoria(loc, value);
             }else{
                 throw "Não é possível mudar o valor de uma constante."
@@ -146,7 +147,7 @@ class SMC {
         }
     }
 
-    //Resolve a operação
+    //Resolve operações (add, mul, div, eq, lt , etc)
     resolveExpressoes(fun) {
         var aux = this.desempilhaControle();
 
@@ -182,22 +183,7 @@ class SMC {
         }
     }
 
-    organizaAtribuicao() {
-        this.desmembra();
-        var left = this.desempilhaControle();
-        var op = this.desempilhaControle();
-        var right = this.desempilhaControle();
-        if (typeof (left) != 'undefined' && left != null) {
-            this.empilhaValor(left);
-        }
-        if (typeof (op) != 'undefined' && op != null && op != "seq") {
-            this.empilhaControle(op);
-        }
-        if (typeof (right) != 'undefined' && right != null) {
-            this.empilhaControle(right);
-        }
-    }
-
+    //Método chamado ao encontrar a palavra reservada "ass" na pilha de controle
     resolveAtribuicao() {
         var aux = this.desempilhaControle();
         var valor = this.desempilhaValor();
@@ -205,6 +191,7 @@ class SMC {
         this.atualizaVariavel(key, valor);
     }
 
+    //Método chamado ao encontrar uma árvore com raiz "if" na pilha de controle
     organizaIf() {
         this.desmembraIf();
         var left = this.desempilhaControle();
@@ -217,6 +204,7 @@ class SMC {
         this.empilhaControle(left);
     }
 
+    //Método chamado ao encontrar uma palavra reservada "if" na pilha de controle
     resolveIf() {
         var condIf = this.desempilhaValor();
         var thenIf = this.desempilhaValor();
@@ -229,6 +217,7 @@ class SMC {
         }
     }
 
+    //Método chamado ao encontrar uma árvore com raiz "while" na pilha de controle
     organizaWhile() {
         this.desmembra();
         var left = this.desempilhaControle();
@@ -240,6 +229,8 @@ class SMC {
         this.empilhaControle(left);
     }
 
+
+    //Método chamado ao encontrar uma palavra reservada "while" na pilha de controle
     resolveWhile() {
         var Vcond = this.desempilhaValor();
         var cond = this.desempilhaValor();
@@ -251,6 +242,7 @@ class SMC {
         }
     }
 
+    //Método para tratar palavras reservadas da AST
     resolveComando(cmd) {
 
         switch (cmd) {
@@ -280,11 +272,13 @@ class SMC {
     }
 
     organizaBlock() {
-
+        //Desmembra e empilha em controle usando notacao pós fixada
         this.organizaExpressoes();
 
+        //Guarda o ambiente atual na pilha de Valor
         this.empilhaValor(this.E == null ? new Map() : this.E);
 
+        //Cria um novo ambiente, identico ao antigo
         this.E = new Map(this.E);
     }
 
@@ -327,6 +321,7 @@ class SMC {
         var ident = this.desempilhaValor();
         var varConst = this.desempilhaValor();
 
+        //Chama o método apropriado para var ou const
         if (varConst == "var") {
             this.declaraVariavel(ident, value);
         } else if (varConst == "const") {
@@ -335,8 +330,10 @@ class SMC {
             Console.log("======DEBUG==========Erro: Algo deu errado,era esperado 'var' ou 'const' da pilha de valor");
         }
 
+        //Reempilha o controle varConst, caso haja outros ini na pilha 
         this.empilhaValor(varConst);
     }
+    
     
     isNumber(n) {
         return !isNaN(parseInt(n)) && isFinite(n);
@@ -346,6 +343,7 @@ class SMC {
 
     }
 
+    //Método usado apenas no web, converte para json por motivos de visualização
     json() {
 
         var temp = this.strMapToObj(this.M.M);
@@ -354,7 +352,7 @@ class SMC {
         return JSON.stringify(smc);
     }
 
-    //Funcao auxiliar para printar o map 
+    //Funcao auxiliar para printar o map() 
     strMapToObj(strMap) {
         let obj = Object.create(null);
         for (let [k, v] of strMap) {
@@ -362,4 +360,23 @@ class SMC {
         }
         return obj;
     }
+
+
+    /*DEPRECATED - DELETE LATER
+    //Método chamado ao encontrar uma árvore com raiz "ass" na pilha de controle
+    organizaAtribuicao() {
+        this.desmembra();
+        var left = this.desempilhaControle();
+        var op = this.desempilhaControle();
+        var right = this.desempilhaControle();
+        if (typeof (left) != 'undefined' && left != null) {
+            this.empilhaValor(left);
+        }
+        if (typeof (op) != 'undefined' && op != null && op != "seq") {
+            this.empilhaControle(op);
+        }
+        if (typeof (right) != 'undefined' && right != null) {
+            this.empilhaControle(right);
+        }
+    }*/
 };
