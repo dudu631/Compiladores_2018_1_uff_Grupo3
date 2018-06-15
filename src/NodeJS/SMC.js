@@ -97,10 +97,15 @@ class SMC {
         if (this.E.has(key)) {
 
             var loc = this.E.get(key);
-            this.M.atualizaMemoria(loc, value);
+
+            if (loc instanceof Location) {
+                this.M.atualizaMemoria(loc, value);
+            } else {
+                throw "Não é possível mudar o valor de uma constante."
+            }
 
         } else {
-            //EXCEPTION - PARAR O PROGRAMA
+            throw "Variável '" + key.toString() + "' não declarada.";
         }
 
     }
@@ -132,7 +137,7 @@ class SMC {
         var left = this.desempilhaControle();
         var op = this.desempilhaControle();
         var right = this.desempilhaControle();
-        if (typeof (op) != 'undefined' && op != null && op != "seq" && op!="iniSeq" && op!= "declSeq") {
+        if (typeof (op) != 'undefined' && op != null && op != "seq" && op != "iniSeq" && op != "declSeq") {
             this.empilhaControle(op);
         }
         if (typeof (right) != 'undefined' && right != null) {
@@ -152,10 +157,16 @@ class SMC {
             var first = this.desempilhaValor();
 
             if (!this.isNumber(second) && this.E.has(second)) {
-                second = this.getValorVariavel(second);
+                if (this.E.get(second) instanceof Location)
+                    second = this.getValorVariavel(second);
+                else
+                    second = this.E.get(second);
             }
             if (!this.isNumber(first) && this.E.has(first)) {
-                first = this.getValorVariavel(first);
+                if (this.E.get(first) instanceof Location)
+                    first = this.getValorVariavel(first);
+                else
+                    first = this.E.get(first);
             }
 
             if (this.isNumber(first) && this.isNumber(second)) {
@@ -298,8 +309,8 @@ class SMC {
 
         //Empilha o Var ou Const em Valor
         this.empilhaValor(tree.left);
-              
-    }   
+
+    }
 
     resolveDeclaracao() {
         //remove o decl de controle
@@ -308,7 +319,7 @@ class SMC {
         //remove o varConst de valor
         this.desempilhaValor();
     }
-    
+
     resolveIni() {
         //Tira o ini da pilha de controle
         this.desempilhaControle();
@@ -323,12 +334,12 @@ class SMC {
         } else if (varConst == "const") {
             this.declaraConstante(ident, value);
         } else {
-            Console.log("======DEBUG==========Erro: esperado var const da pilha de valor");
+            Console.log("======DEBUG==========Erro: Algo deu errado,era esperado 'var' ou 'const' da pilha de valor");
         }
 
         this.empilhaValor(varConst);
     }
-    
+
     isNumber(n) {
         return !isNaN(parseInt(n)) && isFinite(n);
     }
@@ -339,10 +350,9 @@ class SMC {
 
     json() {
 
-        var temp = this.strMapToObj(this.M);
+        var temp = this.strMapToObj(this.M.M);
         var ambiente = this.E != null ? this.strMapToObj(this.E) : null;
         var smc = new SMC(ambiente, this.S, temp, this.C);
-        smc.setAddress(this.address);
         return JSON.stringify(smc);
     }
 
@@ -350,8 +360,6 @@ class SMC {
     strMapToObj(strMap) {
         let obj = Object.create(null);
         for (let [k, v] of strMap) {
-            // We don’t escape the key '__proto__'
-            // which can cause problems on older engines
             obj[k] = v;
         }
         return obj;

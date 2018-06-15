@@ -7,7 +7,7 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{var x=1+2;}");
+var tree = parser.parse("{const x=2;var y=2; y:=x*y;}");
 var final = eval(new SMC(null, [], new Map(), [tree]));
 
 function eval(smc) {
@@ -101,11 +101,11 @@ function eq(a, b) {
 }
 
 function le(a, b) {
-    return a.isLesserThanOrEqualTo(b);
+    return a.isLessThanOrEqualTo(b);
 }
 
 function lt(a, b) {
-    return a.isLesserThan(b);
+    return a.isLessThan(b);
 }
 
 function ge(a, b) {
