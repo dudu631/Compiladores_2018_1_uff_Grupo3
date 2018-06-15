@@ -155,10 +155,16 @@ class SMC {
             var first = this.desempilhaValor();
 
             if (!this.isNumber(second) && this.E.has(second)) {
-                second = this.getValorVariavel(second);
+                if (this.E.get(second) instanceof Location)
+                    second = this.getValorVariavel(second);
+                else
+                    second = this.E.get(second);
             }
             if (!this.isNumber(first) && this.E.has(first)) {
-                first = this.getValorVariavel(first);
+                if (this.E.get(first) instanceof Location)
+                    first = this.getValorVariavel(first);
+                else
+                    first = this.E.get(first);
             }
 
             if (this.isNumber(first) && this.isNumber(second)) {
@@ -286,7 +292,7 @@ class SMC {
         //Tira o block do controle
         var dispose = this.desempilhaControle();
 
-        //Retoma o ambiente externo
+        //Retoma o ambiente antigo
         this.E = this.desempilhaValor();
     }
 
@@ -352,8 +358,6 @@ class SMC {
     strMapToObj(strMap) {
         let obj = Object.create(null);
         for (let [k, v] of strMap) {
-            // We don’t escape the key '__proto__'
-            // which can cause problems on older engines
             obj[k] = v;
         }
         return obj;
