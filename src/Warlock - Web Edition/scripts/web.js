@@ -16,7 +16,7 @@ $( "#gerar" ).click(function() {
 		var tree = parser.parse($("#exp").val());
 
 		evalSMC(new SMC( new Map(),[], new Map(), [tree]));
-
+		
 		addNodes(tree);
 		
 		var lay = cy.makeLayout({name: 'dagre'});
@@ -45,6 +45,7 @@ $( "#compilar" ).click(function() {
 
 		count=0;
 		output = evalSMC(new SMC(new Map(),[], new Map(), [tree]));
+		$("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n===============END===============\n");
 	}catch(err){
 		$("#mensagemErroCod").text(err);
 		$("#codigoInput").addClass("is-invalid");		

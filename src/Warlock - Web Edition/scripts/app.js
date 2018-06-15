@@ -7,6 +7,7 @@ var tree = parser.parse(input);
 
 var count=0;
 var output = evalSMC(new SMC(new Map(),[], new Map(), [tree]));
+$("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n===============END===============\n");
 
 function evalSMC(smc) {
     count++;
@@ -16,10 +17,10 @@ function evalSMC(smc) {
     console.log(JSON.parse(smc.json()));
     $("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n==============Passo "+count+"==============\n");
     var ambiente = smc.E != null ? smc.strMapToObj(smc.E) : null;
-    $("#resultadoOutput").val( $("#resultadoOutput").val() +"E: " +JSON.stringify(ambiente))
-    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\nS: " +JSON.stringify(smc.S));
-    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\nM: " +JSON.stringify(smc.strMapToObj(smc.M.M)));
-    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\nC: " +JSON.stringify(smc.C));
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +">E: " +JSON.stringify(ambiente))
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\n>S: " +JSON.stringify(smc.S));
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\n>M: " +JSON.stringify(smc.strMapToObj(smc.M.M)));
+    $("#resultadoOutput").val( $("#resultadoOutput").val() +"\n>C: " +JSON.stringify(smc.C));
     
     if (smc.C.length > 0) {
 
@@ -54,7 +55,7 @@ function evalSMC(smc) {
         evalSMC(smc);
 
     }
-
+    
     return smc;
 
 }
