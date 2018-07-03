@@ -10,17 +10,33 @@
         return {left:val, operator:first[0], right:rightAssoc(first[1], rest)};
     }   
 }
-Start = Block?
+Start = Module?
+
+Module = r:'module ' t:ident _  b:Block? {return b;};
+
 Block= _"{"_ l:DeclSeq?  r:Sequence? _"}"_ {return {left:l,operator:"block",right:r}}
+
+Procedure =
+	'proc' i:ident'(' p:Params ')' b:Block {return {left:i,operator:"prc",right:p,adit:b}}
+    /'proc' i:ident'()' b:Block {return {left:i,operator:"prc",right:null,adit:b}}
+
+Params = l:AritExpression ',' r:Params {return {left:{left:l,operator:"par",right:null}, operator:"for",right:r} }
+	/l:AritExpression { return {left:l, operator:"par",right:null}}    
+
+Call = l:ident '('r:Params')' _ ';' {return {left:l,operator:"cal",right:r}}
+	/ l:ident '()'_';'{return {left:l,operator:"cal",right:null}}
 
 Sequence =	  
 	 l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }     
      / l:Command ';'? {return l}
-     
+     / l:Procedure op:';' r:Sequence{return {left:l,operator:"seq",right:r}; }
+     / l:Procedure ';' {return l}
+ 
 Command =
 	Assignment
     /If
 	/While
+    /Call
     
 DeclSeq=
 	l:Declaration';' r:DeclSeq{return {left:l,operator:'declSeq',right:r}}
