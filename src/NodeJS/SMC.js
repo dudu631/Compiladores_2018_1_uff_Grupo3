@@ -184,6 +184,26 @@ class SMC {
         }
     }
 
+    organizaProcedure() {
+        this.desmembraIf();
+    }
+
+    resolveProcedure() {
+        var id = this.desempilhaValor();
+        var formals = this.desempilhaValor();
+        var bloco = this.desempilhaValor();
+        // var abs =  formals e bloco;
+        // salva em E (id:abs)
+    }
+
+    resolveCall() {
+        var nome = this.desempilhaValor();
+        var atuais = this.desempilhaValor();
+        // var funcao = this.E.get(nome); funcao tem que receber o abs
+        // Checar se a quantidade de atuais bate com a de formals, fazer os formals receberem os valores de atuais e jogar o block na pilha de controle
+        // e resolver ele.
+    }
+
     organizaAtribuicao() {
         this.desmembra();
         var left = this.desempilhaControle();
