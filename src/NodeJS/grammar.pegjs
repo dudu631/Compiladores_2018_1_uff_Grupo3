@@ -14,29 +14,37 @@ Start = Module?
 
 Module = r:'module ' t:ident _  b:Block? {return b;};
 
-Block= _"{"_ l:DeclSeq?  r:Sequence? _"}"_ {return {left:l,operator:"block",right:r}}
+Block= _"{"_ l:DeclSeq?  r:Sequence? a:Return?_"}"_ {return {left:l,operator:"block",right:r,adit:a}}
+
+Return= 
+	_'return ' l:primary ';'{return {left:l,operator:"ret",right:null}}
 
 Procedure =
 	_'proc' i:ident'(' p:Params ')' b:Block {return {left:i,operator:"prc",right:p,adit:b}}
     /_'proc' i:ident'()' b:Block {return {left:i,operator:"prc",right:null,adit:b}}
 
-Params = l:AritExpression ',' r:Params {return {left:{left:l,operator:"par",right:null}, operator:"for",right:r} }
+Params = l:AritExpression ',' r:Params {return {left:l, operator:"for",right:r} }
 	/l:AritExpression { return {left:l, operator:"par",right:null}}    
 
-Call = l:ident '('r:Params')' _ ';' {return {left:l,operator:"cal",right:r}}
-	/ l:ident '()'_';'{return {left:l,operator:"cal",right:null}}
+Call = l:ident '('r:Params')' _  {return {left:l,operator:"cal",right:r}}
+	/ l:ident '()'_{return {left:l,operator:"cal",right:null}}
 
 Sequence =	  
 	 l:Procedure op:';' r:Sequence{return {left:l,operator:"seq",right:r}; }
-    /l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }         
-    / l:Procedure ';' {return l}
+    /l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }      
     / l:Command ';'? {return l}    
+    / l:Procedure ';' {return l}
+  
  
 Command =
 	Assignment
     /If
 	/While
     /Call
+    /Print
+    
+Print=
+	_ 'print: 'l:primary'' {return {left:l,operator:"prt",right:null}}
     
 DeclSeq=
 	l:Declaration';' r:DeclSeq{return {left:l,operator:'declSeq',right:r}}
@@ -80,7 +88,8 @@ E2 = v:(primary (mul / div))* rest:primary
      { return leftAssoc(v, rest); }
  
 Assignment
-	= l: ident op:":=" r:Expression {return {left:l, operator:"ass", right:r}}
+	=l: ident op:":=" r:Call {return {left:l, operator:"ass", right:r}} 
+    /l: ident op:":=" r:Expression {return {left:l, operator:"ass", right:r}}
      
 primary
   = number

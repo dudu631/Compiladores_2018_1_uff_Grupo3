@@ -233,7 +233,7 @@ class SMC {
             // e resolver ele.
             map = this.matchParams(atuais, abs.params);
 
-            var bloco = this.addDecl(map, abs.bloco);
+            bloco = this.addDecl(map, abs.bloco);
         }
 
         this.empilhaControle(bloco);
@@ -242,9 +242,9 @@ class SMC {
 
     addDecl(map, blk) {
 
-        var string = "var "
+        var string = "var ";
         map.forEach(function (item, key, mapObj) {
-            string += key + "=" + item + ",";
+            string += key + "=" + item.toString() + ",";
         });
 
         string = string.slice(0, -1);
@@ -273,11 +273,12 @@ class SMC {
 
     }
 
+    //ajustar para sem "par"
     matchParams(act, param) {
 
         var map = new Map();
 
-        if (param.operator != 'for' && param.operator!='par') return;
+        if (param.operator != 'for' && param.operator != 'par') return;
 
         if (param.operator == 'for') {
             map.set(param.left.left, act.left.left);
@@ -297,17 +298,16 @@ class SMC {
         return map;
     }
 
-    /*organizaFor() {
+    organizaFor() {
         var arvore = this.desempilhaControle();
         this.empilhaValor(arvore);
-    }*/
-
-    resolveFor() {
-        
     }
 
-    resolvePar() {
-        
+    resolveFor() {
+        var var1 = this.desempilhaValor();
+        var var2 = this.desempilhaValor();
+
+
     }
 
     organizaAtribuicao() {
@@ -396,7 +396,7 @@ class SMC {
             case "while":
                 this.resolveWhile();
                 break;
-            case "print":
+            case "prt":
                 this.resolvePrint();
                 break;
             case "block":
@@ -414,19 +414,39 @@ class SMC {
             case "cal":
                 this.resolveCall();
                 break;
-            case "for":
-                this.resolveFor();
-                break;
-            case "par":
-                this.resolvePar();
+            case "ret":
+                this.resolveReturn();
                 break;
             default:
         }
     }
 
-    organizaBlock() {
+    resolveReturn() {
+        this.desempilhaControle();
+        var ret = this.desempilhaValor();
+        var amb = this.desempilhaValor();
+        if (this.isNumber(ret)) {
+            this.empilhaValor(ret);
+        } else {
+            this.empilhaValor(this.getValorVariavel(ret));
+        }
+        this.empilhaValor(amb);
 
-        this.organizaExpressoes();
+    }
+
+    organizaBlock() {
+        var tree = this.desempilhaControle();
+        this.empilhaControle(tree.operator);
+
+        if (typeof (tree.adit) != 'undefined' && tree.adit != null) {
+            this.empilhaControle(tree.adit);
+        }
+        if (typeof (tree.right) != 'undefined' && tree.right != null) {
+            this.empilhaControle(tree.right);
+        }
+        if (typeof (tree.left) != 'undefined' && tree.left != null) {
+            this.empilhaControle(tree.left);
+        }
 
         this.empilhaValor(this.E == null ? new Map() : this.E);
 
@@ -472,6 +492,10 @@ class SMC {
         var ident = this.desempilhaValor();
         var varConst = this.desempilhaValor();
 
+        if (!this.isNumber(value)) {
+            value = this.getValorVariavel(value);
+        }
+
         if (varConst == "var") {
             this.declaraVariavel(ident, value);
         } else if (varConst == "const") {
@@ -488,7 +512,11 @@ class SMC {
     }
 
     resolvePrint() {
+        this.desempilhaControle();
+        //this.desempilhaValor();
+        var p = this.desempilhaValor();
 
+        console.log("PRINT: " + this.getValorVariavel(p).toString());
     }
 
     json() {
