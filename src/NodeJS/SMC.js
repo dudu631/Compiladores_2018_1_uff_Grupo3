@@ -1,4 +1,8 @@
 ﻿var BigNumber = require('bignumber.js');
+var peg = require("pegjs");
+var fs = require("fs");
+var parser = peg.generate(fs.readFileSync("./declGramar.pegjs", 'utf8'));
+
 
 class Abs {
     constructor(params, blc) {
@@ -206,38 +210,104 @@ class SMC {
     }
 
     resolveProcedure() {
-        var id = this.desempilhaValor();
+        this.desempilhaControle();
         var abs = this.desempilhaValor();
+        var id = this.desempilhaValor();
 
         // salva em E (id:abs)
         this.E.set(id, abs);
     }
 
     resolveCall() {
+        this.desempilhaControle();
         var atuais = this.desempilhaValor();
         var nome = this.desempilhaValor();
         var abs = this.E.get(nome);
+
         // Checar se a quantidade de atuais bate com a de formals, fazer os formals receberem os valores de atuais e jogar o block na pilha de controle
 
-        // e resolver ele.
-        var map = matchParams(atuais,abs.params);
+        var map = null;
+        var bloco = abs.bloco;
 
+        if (abs.params != null) {
+            // e resolver ele.
+            map = this.matchParams(atuais, abs.params);
 
-        addDecl();
-        
+            var bloco = this.addDecl(map, abs.bloco);
+        }
+
+        this.empilhaControle(bloco);
+
     }
 
-    matchParams(act,param) {
+    addDecl(map, blk) {
+
+        var string = "var "
+        map.forEach(function (item, key, mapObj) {
+            string += key + "=" + item + ",";
+        });
+
+        string = string.slice(0, -1);
+        string += ";";
+
+        var tree = parser.parse(string);
+
+        if (blk.left == null) {
+            blk.left = tree
+        }
+        else {
+            var dec = blk.left;
+            if (dec.operator == "declSeq") {
+
+                while (dec.right.operator == "declSeq") {
+                    dec = dec.right;
+                }
+                var temp = dec.right;
+                dec.right = { left: temp, operator: "declSeq", right: tree };
+            } else {
+                blk.left = { left: dec, operator: "declSeq", right: tree }
+            }
+        }
+
+        return blk;
+
+    }
+
+    matchParams(act, param) {
 
         var map = new Map();
 
-        if (act.operator != 'for') return;
+        if (param.operator != 'for' && param.operator!='par') return;
 
+        if (param.operator == 'for') {
+            map.set(param.left.left, act.left.left);
+        }
+        if (param.right == 'for') {
+            param = param.right;
+            act = act.right;
+            map = matchParams(param, act);
+        } else {
+            if (param.operator == 'par') {
+                map.set(param.left, act.left);
+            } else {
+                map.set(param.right.left, act.right.left);
+            }
+        }
+
+        return map;
     }
 
-    organizaFor() {
+    /*organizaFor() {
         var arvore = this.desempilhaControle();
         this.empilhaValor(arvore);
+    }*/
+
+    resolveFor() {
+        
+    }
+
+    resolvePar() {
+        
     }
 
     organizaAtribuicao() {
@@ -260,7 +330,12 @@ class SMC {
         var aux = this.desempilhaControle();
         var valor = this.desempilhaValor();
         var key = this.desempilhaValor();
-        this.atualizaVariavel(key, valor);
+
+        if (this.isNumber(valor)) {
+            this.atualizaVariavel(key, valor);
+        } else {
+            this.atualizaVariavel(key, this.getValorVariavel(valor));
+        }
     }
 
     organizaIf() {
@@ -332,6 +407,18 @@ class SMC {
                 break;
             case "ini":
                 this.resolveIni();
+                break;
+            case "prc":
+                this.resolveProcedure();
+                break;
+            case "cal":
+                this.resolveCall();
+                break;
+            case "for":
+                this.resolveFor();
+                break;
+            case "par":
+                this.resolvePar();
                 break;
             default:
         }

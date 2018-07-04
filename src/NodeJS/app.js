@@ -7,8 +7,8 @@ var reserved = new Map();
 init();
 
 var parser = peg.generate(fs.readFileSync("./grammar.pegjs", 'utf8'));
-var tree = parser.parse("{const x=2;var y=2; y:=x*y;}");
-var final = eval(new SMC(null, [], new Map(), [tree]));
+var tree = parser.parse("module Fact{ proc teste(x){ var y = 1; if ~(x==0){var z=x-1; y:=x*y; teste(z);}else{} }; teste(3); }");
+var final = eval(new SMC(new Map(), [], new Map(), [tree]));
 
 function eval(smc) {
     console.log("\n")
@@ -29,6 +29,8 @@ function eval(smc) {
                 smc.organizaBlock();
             } else if (atual.operator == "decl") {
                 smc.organizaDeclaracao();
+            } else if (atual.operator == "prc") {
+                smc.organizaProcedure();
             } else {
                 smc.organizaExpressoes();
             }
@@ -78,6 +80,11 @@ function init() {
     reserved.set("ini", 0);
     reserved.set("iniSeq", 0);
     reserved.set("declSeq", 0);
+    reserved.set("cal", 0);
+    reserved.set("prc", 0);
+    reserved.set("for", 0);
+    reserved.set("par", 0);
+
 }
 
 function add(a, b) {

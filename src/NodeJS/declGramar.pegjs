@@ -10,7 +10,7 @@
         return {left:val, operator:first[0], right:rightAssoc(first[1], rest)};
     }   
 }
-Start = Module?
+Start = DeclSeq?
 
 Module = r:'module ' t:ident _  b:Block? {return b;};
 
