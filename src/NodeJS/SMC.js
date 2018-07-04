@@ -1,5 +1,12 @@
 ﻿var BigNumber = require('bignumber.js');
 
+class Abs {
+    constructor(params, blc) {
+        this.params = params;
+        this.bloco = blc;
+    }
+}
+
 class Location {
 
     constructor(address) {
@@ -39,7 +46,6 @@ class Memory {
     }
 
 }
-
 
 class SMC {
     constructor(E, S, M, C) {
@@ -185,23 +191,53 @@ class SMC {
     }
 
     organizaProcedure() {
-        this.desmembraIf();
+        var tree = this.desempilhaControle();
+
+        //empilha 'prc'
+        this.empilhaControle(tree.operator);
+
+        //empilha construcao ABS
+        this.empilhaControle(new Abs(tree.right, tree.adit));
+
+        //empilha nome da procedure
+        this.empilhaControle(tree.left);
+
+
     }
 
     resolveProcedure() {
         var id = this.desempilhaValor();
-        var formals = this.desempilhaValor();
-        var bloco = this.desempilhaValor();
-        // var abs =  formals e bloco;
+        var abs = this.desempilhaValor();
+
         // salva em E (id:abs)
+        this.E.set(id, abs);
     }
 
     resolveCall() {
-        var nome = this.desempilhaValor();
         var atuais = this.desempilhaValor();
-        // var funcao = this.E.get(nome); funcao tem que receber o abs
+        var nome = this.desempilhaValor();
+        var abs = this.E.get(nome);
         // Checar se a quantidade de atuais bate com a de formals, fazer os formals receberem os valores de atuais e jogar o block na pilha de controle
+
         // e resolver ele.
+        var map = matchParams(atuais,abs.params);
+
+
+        addDecl();
+        
+    }
+
+    matchParams(act,param) {
+
+        var map = new Map();
+
+        if (act.operator != 'for') return;
+
+    }
+
+    organizaFor() {
+        var arvore = this.desempilhaControle();
+        this.empilhaValor(arvore);
     }
 
     organizaAtribuicao() {
