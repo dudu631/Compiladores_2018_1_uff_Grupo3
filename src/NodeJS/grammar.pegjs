@@ -17,7 +17,7 @@ Module = r:'module ' t:ident _  b:Block? {return b;};
 Block= _"{"_ l:DeclSeq?  r:Sequence? a:Return?_"}"_ {return {left:l,operator:"block",right:r,adit:a}}
 
 Return= 
-	_'return ' l:primary ';'{return {left:l,operator:"ret",right:null}}
+	_'return ' l:AritExpression ';'{return {left:l,operator:"ret",right:null}}
 
 Procedure =
 	_'proc' i:ident'(' p:Params ')' b:Block {return {left:i,operator:"prc",right:p,adit:b}}
