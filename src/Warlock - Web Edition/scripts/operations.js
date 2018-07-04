@@ -20,7 +20,10 @@ reserved.set("decl", 0);
 reserved.set("ini", 0);
 reserved.set("iniSeq", 0);
 reserved.set("declSeq", 0);
-
+reserved.set("cal", 0);
+reserved.set("prc", 0);
+reserved.set("prt", 0);
+reserved.set("ret", 0);
 
 
 function add(a, b) {
