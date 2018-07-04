@@ -155,7 +155,7 @@ class SMC {
         }
     }
 
-    //Resolve a operação
+    //Resolve operações (add, mul, div, eq, lt , etc)
     resolveExpressoes(fun) {
         var aux = this.desempilhaControle();
 
@@ -335,6 +335,7 @@ class SMC {
         }
     }
 
+    //Método chamado ao encontrar uma árvore com raiz "if" na pilha de controle
     organizaIf() {
         this.desmembraIf();
         var left = this.desempilhaControle();
@@ -347,6 +348,7 @@ class SMC {
         this.empilhaControle(left);
     }
 
+    //Método chamado ao encontrar uma palavra reservada "if" na pilha de controle
     resolveIf() {
         var condIf = this.desempilhaValor();
         var thenIf = this.desempilhaValor();
@@ -359,6 +361,7 @@ class SMC {
         }
     }
 
+    //Método chamado ao encontrar uma árvore com raiz "while" na pilha de controle
     organizaWhile() {
         this.desmembra();
         var left = this.desempilhaControle();
@@ -370,6 +373,7 @@ class SMC {
         this.empilhaControle(left);
     }
 
+    //Método chamado ao encontrar uma palavra reservada "while" na pilha de controle
     resolveWhile() {
         var Vcond = this.desempilhaValor();
         var cond = this.desempilhaValor();
@@ -381,6 +385,7 @@ class SMC {
         }
     }
 
+    //Método para tratar palavras reservadas da AST
     resolveComando(cmd) {
 
         switch (cmd) {
@@ -420,7 +425,11 @@ class SMC {
 
     resolveReturn() {
         this.desempilhaControle();
+        
+        //o Valor retornado
         var ret = this.desempilhaValor();
+
+        //Como é final de bloco, é esperado que tenha um ambiente no valor
         var amb = this.desempilhaValor();
         if (this.isNumber(ret)) {
             this.empilhaValor(ret);
@@ -445,8 +454,10 @@ class SMC {
             this.empilhaControle(tree.left);
         }
 
+        //Guarda o ambiente atual na pilha de Valor
         this.empilhaValor(this.E == null ? new Map() : this.E);
 
+        //Cria um novo ambiente, identico ao antigo
         this.E = new Map(this.E);
     }
 
@@ -510,11 +521,11 @@ class SMC {
 
     resolvePrint() {
         this.desempilhaControle();
-        //this.desempilhaValor();
+  
         var p = this.desempilhaValor();
 
         console.log("PRINT: " + this.getValorVariavel(p).toString());
-        $("#resultadoOutput").val(  $("#resultadoOutput").val() +"\n\n>>>>>>>>>>PRINT: "+this.getValorVariavel(p).toString()+"");
+        $("#resultadoOutput").val($("#resultadoOutput").val() + "\n\n>>>>>>>>>>PRINT: " + this.getValorVariavel(p).toString() + "");
     }
 
     //Método usado apenas no web, converte para json por motivos de visualização
@@ -522,7 +533,7 @@ class SMC {
 
         var temp = this.strMapToObj(this.M.M);
         var ambiente = this.E != null ? this.strMapToObj(this.E) : null;
-        var smc = new SMC(ambiente, this.S, temp, this.C);        
+        var smc = new SMC(ambiente, this.S, temp, this.C);
         return JSON.stringify(smc);
     }
 
