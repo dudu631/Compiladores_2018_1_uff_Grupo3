@@ -29,11 +29,10 @@ Params = l:AritExpression ',' r:Params {return {left:l, operator:"for",right:r} 
 Call = l:ident '('r:Params')' _  {return {left:l,operator:"cal",right:r}}
 	/ l:ident '()'_{return {left:l,operator:"cal",right:null}}
 
-Sequence =	  
-	 l:Procedure op:';' r:Sequence{return {left:l,operator:"seq",right:r}; }
-    /l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }      
+Sequence =	  	 
+    l:Command op:';' r:Sequence { return {left:l,operator:"seq",right:r}; }      
     / l:Command ';'? {return l}    
-    / l:Procedure ';' {return l}
+   
   
  
 Command =
@@ -52,6 +51,7 @@ DeclSeq=
     
 Declaration =
 	l:declop __ r:IniSeq {return {left:l,operator:'decl',right:r}}
+    / l:Procedure {return l}
     
 IniSeq =
 	l:Ini',' r:IniSeq {return {left:l,operator:'iniSeq',right:r}}
