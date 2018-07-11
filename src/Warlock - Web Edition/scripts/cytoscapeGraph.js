@@ -78,6 +78,23 @@ var cy = window.cy = cytoscape({
 				cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.right.id } })			
 			}
 		}
+
+		if(tree.adit!=null){
+			if(tree.adit!=null && isRoot(tree.adit)){
+				addNodes(tree.adit);
+				cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.adit.operator.id } })	
+			}else{
+				temp = new Object;
+				temp.id = id++;
+				temp.value = tree.adit;
+				tree.adit =  temp;		
+				
+				cy.add({group: "nodes",
+				data: { id: tree.adit.id, value:tree.adit.value }
+				});
+				cy.add({ group: "edges", data: { source: tree.operator.id, target: tree.adit.id } })			
+			}
+		}
 	
 	};
 
