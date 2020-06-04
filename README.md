@@ -33,3 +33,4 @@ Javascript
  * Karina Pedroza
 
 
+Observação: Este é um projeto construído com finalidade exclusivamente educacional em uma matéria da Universidade Federal Fluminense. 
